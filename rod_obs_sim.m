@@ -69,9 +69,9 @@ for i_seq = 1:n_in_seqs
     %rod_obs_P1
     %rod_obs_P1DcD5
     %rod_obs_P2U
-    rod_obs_P2DcTd4  % observers used in draft of paper
+    %rod_obs_P2DcTd4  % observers used in draft of paper
     %rod_obs_oe125
-    %rod_obs_P2Dcd1_T  % ident. from true outputs
+    rod_obs_P2Dcd1_T  % ident. from true outputs
 
     % Choose which observers to simulate
     % - KF1 : Kalman filter tuned to minimize steady-state errors
