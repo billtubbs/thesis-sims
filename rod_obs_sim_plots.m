@@ -73,13 +73,9 @@ make_iodmplot(Y, Y_m, Y_model, t, [U(:, u_meas) Pd], ...
     string2latex([y_labels y_m_labels y_model_labels]))
 xlim(t([1 end]))
 set(gcf, 'Position', [100 800 360 240])
-filename = sprintf('rod_obs_sim_%d_ioplot.png', i_in_seq);
-saveas(gcf,fullfile(plot_dir, filename))
-filename = sprintf('rod_obs_sim_%d_ioplot.pdf', i_in_seq);
-saveas(gcf,fullfile(plot_dir, filename))
-filename = sprintf('rod_obs_sim_%d_ioplot.svg', i_in_seq);
-saveas(gcf,fullfile(plot_dir, filename))
-cd 
+filename = sprintf('rod_obs_sim_%d_ioplot', i_in_seq);
+save_fig_to_pdf(fullfile(plot_dir, filename))
+
 
 %% Plot of observer estimates vs. true values
 
@@ -203,9 +199,5 @@ end
 
 linkaxes(axs, 'x')
 set(gcf, 'Position', [100 600 360 360])
-filename = sprintf('rod_obs_sim_%d_est.png', i_in_seq);
-saveas(gcf,fullfile(plot_dir, filename))
 filename = sprintf('rod_obs_sim_%d_est.pdf', i_in_seq);
-saveas(gcf,fullfile(plot_dir, filename))
-filename = sprintf('rod_obs_sim_%d_est.svg', i_in_seq);
-saveas(gcf,fullfile(plot_dir, filename))
+save_fig_to_pdf(fullfile(plot_dir, filename))

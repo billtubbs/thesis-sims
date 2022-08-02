@@ -136,6 +136,8 @@ figure(4); clf
 labels = [string2latex(y_labels) y_est_labels_obs];
 make_tsstatplot([{Y_resp} Y_est_resp], t_resp, labels, '$t-t_{step}$');
 set(gcf, 'Position', [100 400 360 240])
+filename = "rod_obs_sim_resp_plot1.pdf";
+save_fig_to_pdf(fullfile(plot_dir, filename))
 
 % Plot all negative step trajectories
 selection = diffs < 0;
@@ -175,12 +177,12 @@ figure(6); clf
 labels = [string2latex(y_labels) y_est_labels_obs];
 make_tsstatplot([{Y_resp} Y_est_resp], t_resp, labels, '$t-t_{step}$');
 set(gcf, 'Position', [100 200 360 240])
-
+filename = "rod_obs_sim_resp_plot2.pdf";
+save_fig_to_pdf(fullfile(plot_dir, filename))
 return
 
 Y_est_avg_resp = nanmean(Y_est_resp, 3);
 Y_avg_resp = nanmean(Y_resps, 2);
-
 
 figure(5); clf
 plot(t_resp, Y_est_avg_resp, 'Linewidth', 2); hold on
@@ -191,26 +193,4 @@ ylabel(string2latex(y_est_plot_labels(1)), 'Interpreter', 'Latex')
 legend([obs_labels string2latex(y_labels(1))], 'Interpreter', 'Latex')
 
 
-return
-
-%% Do again using find_step_periods function
-
-n_settle = 26;
-n_resp_sim = 30;  % 1.5 hrs
-idxs = find_step_periods(Pd, n_settle, n_resp_sim);
-n_periods = numel(idxs);
-Y_resps = nan(n_resp_sim, n_periods);
-for i = 1:n_periods
-    idx = idxs{i};
-    n = min(diff(idx)+1, n_resp_sim);
-    Y_resps(:, i) = Y(idx(1):idx(1)+n-1);
-end
-
-figure(4); clf
-t_resp = Ts*(0:n_resp_sim-1)';
-plot(t_resp, Y_resps, '.-')
-xlim([0 1.3])
-grid on
-
-return
 
