@@ -18,7 +18,7 @@
 clear all
 
 % Specify path to utility functions
-addpath('~/ml-plot-utils/')
+addpath('plot-utils/')
 
 % Specify which simulation case
 p_case = 1;  % Not currently used
@@ -108,5 +108,7 @@ mse_table = array2table(mse_table_data, ...
     'RowNames', {'MSE', 'MSE in transitions', 'MSE in steady-state', ...
         'Variance in steady-state', 'MSD in steady-state'}, ...
     'VariableNames', obs_labels ...
-)
+);
+fprintf("Observer performance metrics\n")
+disp(mse_table)
 

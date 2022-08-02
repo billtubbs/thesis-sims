@@ -32,8 +32,9 @@ clear all
 
 % Specify path to observer functions and others
 addpath('process-observers')
-addpath('data-utils')
-addpath('plot-utils')
+addpath('~/ml-data-utils')
+addpath('~/ml-plot-utils')
+addpath('~/yaml')
 
 % Sub-directories used
 data_dir = 'data';
@@ -42,7 +43,11 @@ if ~isfolder(results_dir)
     mkdir(results_dir);
 end
 
-% Specify application case
+% Load simulation specification from Yaml file
+sim_spec = yaml.loadFile('sim_spec.yaml');
+
+% Load input data
+
 p_case = 1;  % Only case 1 used here
  
 % Specify which data set(s) to run simulations with
@@ -52,9 +57,9 @@ p_case = 1;  % Only case 1 used here
 % - 3 for initial observer test (Fig. 5 in paper)
 % - 5 for observer parameter optimization
 % - 6 to 15 for observer Monte Carlo simulations.
-%i_in_seqs = 3;
+i_in_seqs = 1;
 %i_in_seqs = [1, 2, 3, 4, 5];
-i_in_seqs = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
+%i_in_seqs = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
 % Run observer simulations
 n_in_seqs = numel(i_in_seqs);
@@ -69,7 +74,7 @@ for i_seq = 1:n_in_seqs
     %rod_obs_P1
     %rod_obs_P1DcD5
     %rod_obs_P2U
-    rod_obs_P2DcTd4  % observers used in IFAC paper
+    %rod_obs_P2DcTd4  % observers used in draft of paper
     %rod_obs_oe125
     %rod_obs_P2Dcd1_T  % ident. from true outputs
 
@@ -137,7 +142,7 @@ for i_seq = 1:n_in_seqs
     %% Display and save simulation results
 
     % Remove semi-colon to display results table
-    sim_out.data;
+    sim_out.data
 
     filename = sprintf('rod_obs_sim_%d_%d.csv', p_case, i_in_seq);
     writetable(drop_empty_cols(sim_out.data), fullfile(results_dir, filename));
@@ -363,6 +368,6 @@ end
 fprintf("Run rod_obs_sim_plots.m to produce plots.\n")
 
 % To calculate evaluation metrics, run this file:
-%rod_obs_calc_metrics
+%rod_obs_sim_plots
 
 fprintf("Run rod_obs_calc_metrics.m to calculate evaluation metrics.\n")
