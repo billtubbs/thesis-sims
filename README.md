@@ -5,7 +5,7 @@ MATLAB code and data used to reproduce results in the following conference paper
 
 ## Input data
 
-The 'data' subdirectory contains time-series data sets from 15 simulations of a grinding process model (the model itself is not available here).  Data sets 1 to 5 contain short simulations of 300 time steps.  Simulations 6 to 15 contain longer simulations of 2460 time steps.
+The [data](data) subdirectory contains time-series data sets from 15 simulations of a grinding process model (the model itself is not available here).  Data sets 1 to 5 contain short simulations of 300 time steps.  Simulations 6 to 15 contain longer simulations of 2460 time steps.  The files contain data for 7 process variables although only two were used in this work (BASE_ORE_MIX and SAG_OF_P80_M).
 
 | #  | Filename                                    | Use          |
 | -- | ------------------------------------------- | ------------ |
@@ -19,7 +19,9 @@ The 'data' subdirectory contains time-series data sets from 15 simulations of a 
 
 ## Instructions to reproduce the results
 
-Open the script [rod_obs_sim.m](rod_obs_sim.m) and specify the sequences to include in the simulations in lines 55-57.  For example, specify the first 5 as follows:
+The code has been tested with MATLAB versions 2019b, 2021b.  It may or may not work with other versions!
+
+Open the script [rod_obs_sim.m](rod_obs_sim.m) and specify the input data sequences to include in the simulations in lines 55-57.  For example, specify the first 5 as follows:
 
 ```
 i_in_seqs = [1, 2, 3, 4, 5];
@@ -33,17 +35,12 @@ observers = {KF1, KF2, MMKF, SKF};
 
 The observers are defined in a separate script file and loaded on line 72. The observers used in the paper are all defined in the file [rod_obs_P2DcTd4.m](rod_obs_P2DcTd4.m).
 
-Run the script and this should produce the following output:
+Running [rod_obs_sim.m](rod_obs_sim.m) should produce the following output:
 
 ```lang-none
 Starting observer simulations with input seq. #1 ...
 Observer simulation results saved to file: rod_obs_sim_1_1.csv
 MKF simulation results saved to file: rod_obs_sim_1_1_MMKF.csv
-
-mse_table_tr =
-
-  5×4 table
-
                                   KF1         KF2       MMKF        SKF   
                                 ________    _______    _______    ________
 
@@ -53,18 +50,15 @@ mse_table_tr =
     Variance in steady-state     0.60641      1.853     1.4864     0.33968
     MSD in steady-state         0.078099    0.61098    0.45144    0.090377
 
+Existing results loaded from file: rod_obs_sim_1_summary.csv
 Summary results saved to file: rod_obs_sim_1_summary.csv
 Step responses identified: 1
+Existing step responses loaded from file: rod_obs_sim_1_resps.csv
 Step responses saved to file: rod_obs_sim_1_resps.csv
 
 Starting observer simulations with input seq. #2 ...
 Observer simulation results saved to file: rod_obs_sim_1_2.csv
 MKF simulation results saved to file: rod_obs_sim_1_2_MMKF.csv
-
-mse_table_tr =
-
-  5×4 table
-
                                   KF1        KF2       MMKF        SKF   
                                 _______    _______    _______    ________
 
@@ -83,11 +77,6 @@ Step responses saved to file: rod_obs_sim_1_resps.csv
 Starting observer simulations with input seq. #3 ...
 Observer simulation results saved to file: rod_obs_sim_1_3.csv
 MKF simulation results saved to file: rod_obs_sim_1_3_MMKF.csv
-
-mse_table_tr =
-
-  5×4 table
-
                                   KF1         KF2       MMKF        SKF   
                                 ________    _______    _______    ________
 
@@ -106,11 +95,6 @@ Step responses saved to file: rod_obs_sim_1_resps.csv
 Starting observer simulations with input seq. #4 ...
 Observer simulation results saved to file: rod_obs_sim_1_4.csv
 MKF simulation results saved to file: rod_obs_sim_1_4_MMKF.csv
-
-mse_table_tr =
-
-  5×4 table
-
                                   KF1         KF2       MMKF        SKF   
                                 ________    _______    _______    ________
 
@@ -129,11 +113,6 @@ Step responses saved to file: rod_obs_sim_1_resps.csv
 Starting observer simulations with input seq. #5 ...
 Observer simulation results saved to file: rod_obs_sim_1_5.csv
 MKF simulation results saved to file: rod_obs_sim_1_5_MMKF.csv
-
-mse_table_tr =
-
-  5×4 table
-
                                   KF1        KF2       MMKF        SKF   
                                 _______    _______    _______    ________
 
@@ -173,13 +152,18 @@ Explanation of output results files:
 - The files 'rod_obs_sim_1_1.csv', 'rod_obs_sim_1_2.csv', ... etc. contain the state estimates, output estimates and output estimation errors of each observer for the duration of each simulation.
 - The files 'rod_obs_sim_1_1_MMKF.csv', 'rod_obs_sim_1_2_MMKF.csv', ... etc. contain additional data on the multi-model observer (MMKF), such as the state estimates and conditional probabilities of each of the observer's Kalman filters.
 - The file 'rod_obs_sim_1_resps.csv' contains the data used to create the plot of observer responses to shocks (Fig. 6 in the paper)
-- The file 'rod_obs_sim_1_summary.csv' will contain a records of all the simulation parameters, model parameters, observer parameters, and overall RMSE metrics for each simualtion. This file is not over-written by 'rod_obs_sim.m'. Every time a new simulation is run, a new row is added to 'rod_obs_sim_1_summary.csv'.
+- The file 'rod_obs_sim_1_summary.csv' will contain a records of all the simulation parameters, model parameters, observer parameters, and overall RMSE metrics for each simualtion. This file is not over-written by 'rod_obs_sim.m'. Every time a new simulation is run, a new row is added to 'rod_obs_sim_1_summary.csv'. ***Before re-running simulations, remove the previous results from this file or erase it completely, otherwise, some results may be duplicated.***
 
 ## Plots
 
-To produce the plots used in the paper, run all the simulations (1 to 15) and then run the scripts [rod_obs_sim_plots.m](rod_obs_sim_plots.m) and [rod_obs_step_plots.m](rod_obs_step_plots.m).
+To produce the plots shown in the paper, run simulations for all the datasets (1 to 15) and then run the scripts [rod_obs_sim_plots.m](rod_obs_sim_plots.m) and [rod_obs_step_plots.m](rod_obs_step_plots.m).
 
-After running these scripts, images of the plot figures will be saved in the [plots](plots) folder in various file formats.
+After running these scripts, images of the plot figures will be saved in the [plots](plots) folder in pdf format:
+
+- rod_obs_sim_1_ioplot.pdf
+- rod_obs_sim_3_est.pdf
+- rod_obs_sim_resp_plot1.pdf
+- rod_obs_sim_resp_plot2.pdf
 
 
 ## Evaluation metrics
@@ -207,5 +191,5 @@ Observer performance metrics
 A set of test scripts are included to verify that various components are working correctly.  To run all the tests run the following command from the main directory of this repository.
 
 ```
-runtests
+>> runtests
 ```
