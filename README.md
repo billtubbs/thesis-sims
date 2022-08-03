@@ -1,7 +1,9 @@
 # ifac-2022-mmkf
-MATLAB code and data used to reproduce results in the following conference paper presented at the 19th Symposium on Control, Optimization and Automation in Mining, Mineral and Metal Processing ([IFAC MMM](https://ifacmmm2022.org)) in Montreal.
+MATLAB code and data to reproduce results in the following conference paper presented at the 19th Symposium on Control, Optimization and Automation in Mining, Mineral and Metal Processing ([IFAC MMM](https://ifacmmm2022.org)) in Montreal.
 
 - Tubbs, W. J., Desbiens, A., and Bouchard, J. (2022). An Observer to Detect Infrequently-Occurring Disturbances in Grinding Operations.
+
+![Figure showing average observer responses to step disturbances](plots/rod_obs_sim_resp_plot1.png)
 
 ## Input data
 
@@ -19,7 +21,7 @@ The [data](data) subdirectory contains time-series data sets from 15 simulations
 
 ## Instructions to reproduce the results
 
-The code has been tested with MATLAB versions 2019b, 2021b.  It may or may not work with other versions!
+The code has been tested with MATLAB versions 2019b, 2020b, and 2021b.  It may or may not work with other versions!
 
 Open the script [rod_obs_sim.m](rod_obs_sim.m) and specify the input data sequences to include in the simulations in lines 55-57.  For example, specify the first 5 as follows:
 
@@ -27,15 +29,15 @@ Open the script [rod_obs_sim.m](rod_obs_sim.m) and specify the input data sequen
 i_in_seqs = [1, 2, 3, 4, 5];
 ```
 
-To change the observers to include in the simulation, edit line 82:
+To change which observers are included in the simulations, edit line 82:
 
 ```
 observers = {KF1, KF2, MMKF, SKF};
 ```
 
-The observers are defined in a separate script file and loaded on line 72. The observers used in the paper are all defined in the file [rod_obs_P2DcTd4.m](rod_obs_P2DcTd4.m).
+The observers are defined in separate script files and loaded on line 72. The observers used in the paper are defined in the file [rod_obs_P2DcTd4.m](rod_obs_P2DcTd4.m).
 
-Running [rod_obs_sim.m](rod_obs_sim.m) should produce the following output:
+Running [rod_obs_sim.m](rod_obs_sim.m) with the above settings should produce the following output:
 
 ```lang-none
 Starting observer simulations with input seq. #1 ...
@@ -188,7 +190,7 @@ Observer performance metrics
 
 ## Unit tests
 
-A set of test scripts are included to verify that various components are working correctly.  To run all the tests run the following command from the main directory of this repository.
+A set of test scripts are included to verify that the main sub-routines are working correctly.  To run all the tests run the following command from the main directory of this repository.
 
 ```
 >> runtests
