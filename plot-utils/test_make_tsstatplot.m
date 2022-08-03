@@ -44,6 +44,6 @@ t = 0.5*(0:20)';
 Y = {randn(21, 10), randn(21, 10)+2*sin(t)};
 
 figure(4)
-y_labels = {'$y_1(t)$', '$y_2(t)$'};
+y_labels = {'$V(t)$', '$W(t)$'};
 make_tsstatplot(Y, t, y_labels, '$t$ (mins)', nan(2), 'minmax', 'mean')
 save_fig_to_pdf(fullfile(plot_dir, 'tsstatplot4.pdf'))

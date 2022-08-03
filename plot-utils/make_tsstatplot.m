@@ -39,7 +39,7 @@ function make_tsstatplot(Y, t, y_labels, x_label, y_lim, area, line)
     if isnumeric(Y)  % case of only one data group
         Y = {Y};
     end
-    if nargin < 6
+    if nargin < 3
         if numel(Y) == 1
             y_labels = "$y(t)$";
         else
@@ -47,7 +47,6 @@ function make_tsstatplot(Y, t, y_labels, x_label, y_lim, area, line)
         end
     else
         y_labels = string(y_labels);
-        assert(numel(y_labels) == numel(Y));
     end
     line_labels = cell(1, numel(y_labels)*2);
     % Get color order

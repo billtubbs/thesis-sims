@@ -18,6 +18,7 @@ rng(0)
 
 % Dependencies:
 addpath('process-observers')
+addpath('data-utils')
 addpath('plot-utils')
 
 % Sub-directories used
@@ -179,18 +180,7 @@ make_tsstatplot([{Y_resp} Y_est_resp], t_resp, labels, '$t-t_{step}$');
 set(gcf, 'Position', [100 200 360 240])
 filename = "rod_obs_sim_resp_plot2.pdf";
 save_fig_to_pdf(fullfile(plot_dir, filename))
-return
 
-Y_est_avg_resp = nanmean(Y_est_resp, 3);
-Y_avg_resp = nanmean(Y_resps, 2);
-
-figure(5); clf
-plot(t_resp, Y_est_avg_resp, 'Linewidth', 2); hold on
-plot(t_resp, Y_avg_resp, 'k--', 'Linewidth', 2);
-grid on
-xlabel('$t - t_{step}$', 'Interpreter', 'Latex')
-ylabel(string2latex(y_est_plot_labels(1)), 'Interpreter', 'Latex')
-legend([obs_labels string2latex(y_labels(1))], 'Interpreter', 'Latex')
 
 
 
