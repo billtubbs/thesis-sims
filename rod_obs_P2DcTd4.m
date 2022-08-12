@@ -31,7 +31,7 @@ s = tf('s');
 Gc = -32.4 * exp(-0.2 * s) / (1 + 0.106*s)^2;
 Gc.TimeUnit = 'hours';
 Gd = c2d(Gc, Ts, 'ZOH');
-Gdss = ss(absorbDelay(Gd));
+Gdss = absorbDelay(ss(Gd));
 
 % Alternatively
 Gd2 = c2d(tf(-32.4, conv([0.106 1], [0.106 1])), Ts);
