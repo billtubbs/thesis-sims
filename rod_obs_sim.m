@@ -219,7 +219,7 @@ for i_seq = 1:n_in_seqs
     end
     sq_devs = sq_devs(~isnan(sq_devs(:, 1)), :);
     Y_var_ss = mean(sq_devs);
-    
+
     % Calculate mean-squared differences
     Y_diffs = [nan(1, size(Y_est, 2)); diff(Y_est, 1)];
     Y_MSD_ss = mean(Y_diffs(ss_periods,:).^2, 1, 'omitnan');

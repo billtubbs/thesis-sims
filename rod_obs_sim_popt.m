@@ -5,7 +5,7 @@
 clear all
 
 % Specify path to observer functions
-addpath('process-observers')
+addpath('~/process-observers')
 addpath('~/ml-data-utils')
 addpath('~/ml-plot-utils')
 
@@ -38,9 +38,9 @@ sim_label = 'popt';
 % Load observers
 %rod_obs_P1Dcd4
 %rod_obs_P1
-rod_obs_P1DcD5
+%rod_obs_P1DcD5
 %rod_obs_P2U
-%rod_obs_P2DcTd4  % observers used in draft of paper
+rod_obs_P2DcTd4  % observers used in IFAC paper
 %rod_obs_oe125
 
 % Generate the simulation data with the following script which 
@@ -48,33 +48,33 @@ rod_obs_P1DcD5
 %  - sim_experiment_ore_switching.m
 
 % Define parameter ranges
-n_filt_values = {10, 15, 20, 25, 30};
+nh_values = {10, 15, 20, 25, 30};
 n_min_values = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 29};
 
-[n_filt_idx, n_min_idx] = ndgrid(n_filt_values, n_min_values);
-n_combs = numel(n_filt_idx);
+[nh_idx, n_min_idx] = ndgrid(nh_values, n_min_values);
+n_combs = numel(nh_idx);
 
 
 for i_comb = 1:n_combs
 
     % Create observer with parameter values
-    n_filt = n_filt_idx{i_comb};  % number of filters
+    nh = nh_idx{i_comb};  % number of filters
     n_min = n_min_idx{i_comb};  % minimum life of cloned filters
-    if n_filt <= n_min
+    if nh <= n_min
         continue
     end
 
     % Choose the observer to simulate
     obs = MMKF;  % make sure a copy is made
     assert(startsWith(obs.label, 'MMKF'))
-    
-    % Re-initialize observer
-    obs = mkf_observer_AFMM(A,B,C,D,Ts,u_meas,obs.P0,obs.epsilon,obs.sigma_wp, ...
-        obs.Q0,obs.R{1},n_filt,obs.f,n_min,obs.label);
+
+    % Re-initialize observer 1 - sequence pruning
+    obs = MKFObserverSP_RODD(model,io,obs.P0,obs.epsilon,obs.sigma_wp, ...
+        obs.Q0,obs.R,nh,n_min,obs.label);
     observers = {obs};
 
     fprintf("\nObserver simulation %d with \n", i_comb)
-    fprintf("n_filt: %d, n_min: %d, Input seq.: #%d\n", n_filt, n_min, ...
+    fprintf("nh: %d, n_min: %d, Input seq.: #%d\n", nh, n_min, ...
         i_in_seq)
 
     % Load system simulation results
@@ -208,9 +208,13 @@ for i_comb = 1:n_combs
     sq_devs = sq_devs(~isnan(sq_devs(:, 1)), :);
     Y_var_ss = mean(sq_devs);
 
+    % Calculate mean-squared differences
+    Y_diffs = [nan(1, size(Y_est, 2)); diff(Y_est, 1)];
+    Y_MSD_ss = mean(Y_diffs(ss_periods,:).^2, 1, 'omitnan');
+
     % Display summary table
-    mse_table = array2table([Y_MSE' Y_MSE_tr' Y_MSE_ss' Y_var_ss'], ...
-        'RowNames', obs_labels, ...
+    mse_table = array2table([Y_MSE' Y_MSE_tr' Y_MSE_ss' Y_var_ss' Y_MSD_ss'], ...
+        'RowNames', string(obs_labels), ...
         'VariableNames', metrics_labels ...
     );
     % Transpose the table (complicated in MATLAB):
@@ -218,7 +222,7 @@ for i_comb = 1:n_combs
     mse_table_tr = removevars(mse_table_tr, 'OriginalVariableNames');
     mse_table_tr.Properties.RowNames = {'MSE', ...
         'MSE in transitions', 'MSE in steady-state', ...
-        'Variance in steady-state'};
+        'Variance in steady-state', 'MSD in steady-state'};
     mse_table_tr
 
     % Compute errors in MKF observer estimates (if used)
@@ -229,21 +233,15 @@ for i_comb = 1:n_combs
         MKF_Y_MSE{f} = size(sim_out.MKF_Y_est{f}, 1);
         % Compute errors in multiple filter state estimates
         % Note: First estimates are at k=1
-        MKF_Y_errors{f} = repmat(Y, 1, obs.n_filt) - sim_out.MKF_Y_est{f};
+        MKF_Y_errors{f} = repmat(Y, 1, obs.nh) - sim_out.MKF_Y_est{f};
         MKF_Y_MSE{f} = mean(MKF_Y_errors{f}(2:end, :).^2, 1);
     end
 
 
     %% Combine all parameters and results and add to summary results file
 
-    % Model parameters
-    sys.name = model_name;
-    sys.A = A;
-    sys.B = B;
-    sys.C = C;
-    sys.D = D;
-    sys.Ts = Ts;
-    sys_params = objects2tablerow(containers.Map({'sys'}, {sys}));
+    % System model parameters
+    sys_params = objects2tablerow(containers.Map({'sys'}, {model}));
 
     % Observer parameters
     rv_params = objects2tablerow( ...
@@ -254,7 +252,8 @@ for i_comb = 1:n_combs
     for f = 1:n_obs
         obs = observers{f};
         params = get_obs_params(obs);
-        obs_params{f} = objects2tablerow(containers.Map({obs.label}, {params}));
+        objects = containers.Map(cellstr(obs.label), {params});
+        obs_params{f} = objects2tablerow(objects);
     end
     obs_params = horzcat(obs_params{:});
 
