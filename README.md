@@ -1,5 +1,12 @@
-# ifac-2022-mmkf
-MATLAB code and data to reproduce results in the following conference paper presented at the 19th Symposium on Control, Optimization and Automation in Mining, Mineral and Metal Processing ([IFAC MMM](https://ifacmmm2022.org)) in Montreal.
+# thesis-sims
+
+This is work-in-progress...
+
+MATLAB code and data to reproduce simulation results included in my Masters thesis report, December 2022.
+
+ - Tubbs, W. J., A Disturbance Model and Observer for Grinding Process Applications, Mémoire.
+
+Similar results were previously published in the following conference paper presented at the 19th Symposium on Control, Optimization and Automation in Mining, Mineral and Metal Processing ([IFAC MMM](https://ifacmmm2022.org)) in Montreal.
 
 - Tubbs, W. J., Desbiens, A., and Bouchard, J. (2022). An Observer to Detect Infrequently-Occurring Disturbances in Grinding Operations.
 
@@ -158,7 +165,7 @@ Explanation of output results files:
 
 ## Plots
 
-To produce the plots shown in the paper, run simulations for all the datasets (1 to 15) and then run the scripts [rod_obs_sim_plots.m](rod_obs_sim_plots.m) and [rod_obs_step_plots.m](rod_obs_step_plots.m).
+To produce the plots shown in the report, run simulations for all the datasets (1 to 15) and then run the scripts [rod_obs_sim_plots.m](rod_obs_sim_plots.m) and [rod_obs_step_plots.m](rod_obs_step_plots.m).
 
 After running these scripts, images of the plot figures will be saved in the [plots](plots) folder in pdf format:
 
@@ -179,13 +186,13 @@ Results for the following simulations found:
 
 Observer performance metrics
                                   KF1        KF2       MMKF        SKF   
-                                ________    ______    _______    ________
+                                _______    _______    _______    ________
 
-    MSE                            11.01    3.6869     3.4952      1.8191
-    MSE in transitions            21.137    7.7201     11.208      5.0722
-    MSE in steady-state           7.9091    2.4523     1.1342      0.8232
-    Variance in steady-state      1.8008    1.9026    0.47604     0.23759
-    MSD in steady-state         0.019243    0.5375      0.156    0.028593
+    MSE                           10.62     3.2917     2.9108      1.5636
+    MSE in transitions           20.343     6.2949     8.6852      4.0146
+    MSE in steady-state          7.6436     2.3723     1.1431     0.81326
+    Variance in steady-state     1.7384     1.8211    0.52937     0.23148
+    MSD in steady-state         0.01877    0.47488    0.18608    0.027355
 ```
 
 ## Unit tests
