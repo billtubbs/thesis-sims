@@ -122,7 +122,7 @@ for i_comb = 31:n_combs
     % Reject combination if it does not meet criteria
     nh_max = 200;
     beta_min = 0.85;
-    if (nh > nh_max) || (obs.beta < beta_min)
+    if (obs.nh_max > nh_max) || (obs.beta < beta_min)
         continue
     end
 
