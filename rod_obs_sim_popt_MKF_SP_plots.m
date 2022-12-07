@@ -24,7 +24,7 @@ if ~isfolder(plot_dir)
 end
 
 % Load summary results csv file
-sim_label = 'popt';
+sim_label = 'popt_SP';
 p_case = 1;
 filename = sprintf('rod_obs_sim_%s_%d_summary.csv', sim_label, p_case);
 summary_results = readtable(fullfile(results_dir, filename));

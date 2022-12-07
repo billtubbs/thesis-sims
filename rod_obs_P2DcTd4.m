@@ -175,9 +175,27 @@ obs_models = {obs_model1, obs_model3};
 % Use this to test performence of multi-model filters
 SKF = SKFObserver(obs_models,P0,'SKF');
 
-% Multiple model observer 1 - sequence pruning
+% Multiple model observer 1 - sequence fusion
+Q0 = diag([q00*ones(1, n-1) 0]);
+f = 15;  % fusion horizon
+m = 2;  % maximum number of shocks
+d = 5;  % spacing parameter
+MKF_SF95 = MKFObserverSF_RODD95(model,io,P0,epsilon,sigma_wp, ...
+    Q0,R,f,m,d,'MKF_SF95');
+
+% Multiple model observer 2 - sequence fusion
+Q0 = diag([q00*ones(1, n-1) 0]);
+nf = 3;  % detection intervals in fusion horizon
+m = 2;  % maximum number of shocks
+d = 5;  % spacing parameter
+MKF_SF1 = MKFObserverSF_RODD(model,io,P0,epsilon,sigma_wp, ...
+    Q0,R,nf,m,d,'MKF_SF1');
+
+% Multiple model observer 2 - sequence pruning
 Q0 = diag([q00*ones(1, n-1) 0]);
 nh = 20;  % number of filters
 n_min = 18;  % minimum life of cloned filters
-MMKF = MKFObserverSP_RODD(model,io,P0,epsilon,sigma_wp, ...
-    Q0,R,nh,n_min,'MMKF');
+MKF_SP1 = MKFObserverSP_RODD(model,io,P0,epsilon,sigma_wp, ...
+    Q0,R,nh,n_min,'MKF_SP');
+
+observers = {KF1, KF2, KF3, SKF, MKF_SF95, MKF_SF1, MKF_SP1};

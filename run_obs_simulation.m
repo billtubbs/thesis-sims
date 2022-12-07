@@ -63,11 +63,18 @@ function sim_out = run_obs_simulation(Ts, data, observers)
     MKF_X_est = cell(1, n_obs_mkf);
     MKF_Y_est = cell(1, n_obs_mkf);
     MKF_p_seq_g_Yk = cell(1, n_obs_mkf);
+    
     for f = 1:n_obs_mkf
         obs = observers{obs_mkf(f)};
-        MKF_i{f} = zeros(size(k));
-        MKF_X_est{f} = nan(size(k, 1), obs.nh*n);
-        MKF_p_seq_g_Yk{f} = nan(size(k, 1), obs.nh);
+        MKF_i{f} = int16(zeros(size(k)));
+        switch obs.type
+            case {"MKF", "MKF_SP", "MKF_SP_RODD"}
+                nh = obs.nh;
+            case {"MKF_SF_RODD95", "MKF_SF_RODD"}
+                nh = obs.nm;  % save merged estimates
+        end
+        MKF_X_est{f} = nan(size(k, 1), nh*n);
+        MKF_p_seq_g_Yk{f} = nan(size(k, 1), nh);
     end
 
     % Start simulation at k = 0 (i = 1)
@@ -99,7 +106,7 @@ function sim_out = run_obs_simulation(Ts, data, observers)
                     % Update observer estimates
                     obs.update(yk_m, uk_m, rk);
                 
-                case {"MKF", "MKF_SF_RODD95", "MKF_SF_RODD", ...
+                case {"MKF", "MKF_SP", "MKF_SF_RODD95", "MKF_SF_RODD", ...
                         "MKF_SP_RODD"}
                     % Multi-model observers with pruning algorithm
 
@@ -113,11 +120,24 @@ function sim_out = run_obs_simulation(Ts, data, observers)
                     else
                         MKF_i{f_mkf}(i) = nan;
                     end
-                    MKF_X_est{f_mkf}(i, :) = ...
-                        reshape(obs.filters.Xk_est, 1, []);
-                    MKF_Y_est{f_mkf}(i, :) = ...
-                        reshape(obs.filters.Yk_est, 1, []);
-                    MKF_p_seq_g_Yk{f_mkf}(i, :) = obs.p_seq_g_Yk';
+                    switch obs.type
+                        case {"MKF", "MKF_SP", "MKF_SP_RODD"}
+                            MKF_X_est{f_mkf}(i, :) = ...
+                                reshape(obs.filters.Xk_est, 1, []);
+                            MKF_Y_est{f_mkf}(i, :) = ...
+                                reshape(obs.filters.Yk_est, 1, []);
+                            MKF_p_seq_g_Yk{f_mkf}(i, :) = ...
+                                obs.p_seq_g_Yk';
+                        case {"MKF_SF_RODD95", "MKF_SF_RODD"}
+                            % For these observers save merged 
+                            % estimates
+                            MKF_X_est{f_mkf}(i, :) = ...
+                                reshape(obs.merged.Xk_est, 1, []);
+                            MKF_Y_est{f_mkf}(i, :) = ...
+                                reshape(obs.merged.Yk_est, 1, []);
+                            MKF_p_seq_g_Yk{f_mkf}(i, :) = ...
+                                obs.merged.p_seq_g_Yk';
+                    end
 
                 otherwise
                     error('Value error: observer type not recognized')
