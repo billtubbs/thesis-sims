@@ -95,12 +95,13 @@ fprintf("%d of %d possible combinations will be tested\n", ...
 n_combs = numel(ndi_idx);
 
 % Start simulations
-for i_comb = 1:n_combs
+for i_comb = 31:n_combs
 
     % Create observer with parameter values
     nf = ndi_idx{i_comb};  % number of detection intervals
     m = m_idx{i_comb};  % maximum no. of shocks in fusion horizon
     d = d_idx{i_comb};  % length of detection interval
+    f = nf * d;  % fusion horizon
 
     % Choose the observer to simulate
     i_obs = find(cellfun(@(obs) strcmp(obs.label, obs_label), observers));
