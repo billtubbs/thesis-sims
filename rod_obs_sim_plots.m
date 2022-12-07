@@ -68,9 +68,10 @@ Y_m = sim_data.Y_m;
 Y_model = lsim(Gpss, Wp, t);
 
 figure(1); clf
-make_iodmplot(Y, Y_m, Y_model, t, [U(:, u_meas) Pd], ...
+make_iodmplot(Y, Y_m, Y_model, t, [U(:, u_known) Pd], ...
     string2latex([u_labels p_labels]), ...
-    string2latex([y_labels y_m_labels y_model_labels]))
+    string2latex([y_labels y_m_labels y_model_labels]), ...
+    t_label)
 xlim(t([1 end]))
 set(gcf, 'Position', [100 800 360 240])
 filename = sprintf('rod_obs_sim_%d_ioplot', i_in_seq);
@@ -162,7 +163,7 @@ for i = 1:ny
     %ylim(axes_limits_with_margin([Y Y_est], 0.1))
     ylim([-15 4])
     set(gca, 'TickLabelInterpreter', 'latex')
-    %xlabel('$t$', 'Interpreter', 'Latex')
+    %xlabel(t_label, 'Interpreter', 'Latex')
     y_label = string2latex(strjoin([y_labels(i) y_est_plot_labels(i)], ', '));
     ylabel(y_label, 'Interpreter','Latex')
     legend([obs_labels string2latex(y_labels(i))], 'Interpreter', 'Latex', 'Position', [0.39, 0.78, .13, .12])
@@ -187,7 +188,7 @@ for i = 1:nw
     %ylim(axes_limits_with_margin([Pd X_est(:, idx(i)+ + n*(n_obs-1))], 0.1))
     ylim([-0.2 0.5])
     set(gca, 'TickLabelInterpreter', 'latex')
-    xlabel('$t$', 'Interpreter', 'Latex')
+    xlabel(t_label, 'Interpreter', 'Latex')
     y_label = string2latex(strjoin([p_labels(i) x_est_plot_labels(idx(i))], ', '));
     ylabel(y_label,'Interpreter','Latex')
     legend([obs_labels string2latex(p_labels(i))], 'Interpreter', 'Latex', 'Position', [0.37, 0.13, .13, .12])

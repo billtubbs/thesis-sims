@@ -31,7 +31,7 @@
 clear all
 
 % Specify path to observer functions and others
-addpath('process-observers')
+addpath('~/process-observers')
 addpath('data-utils')
 addpath('plot-utils')
 
@@ -222,11 +222,11 @@ for i_seq = 1:n_in_seqs
     
     % Calculate mean-squared differences
     Y_diffs = [nan(1, size(Y_est, 2)); diff(Y_est, 1)];
-    Y_MSD_ss = nanmean(Y_diffs(ss_periods,:).^2, 1);
+    Y_MSD_ss = mean(Y_diffs(ss_periods,:).^2, 1, 'omitnan');
 
     % Display summary table
     mse_table = array2table([Y_MSE' Y_MSE_tr' Y_MSE_ss' Y_var_ss' Y_MSD_ss'], ...
-        'RowNames', obs_labels, ...
+        'RowNames', string(obs_labels), ...
         'VariableNames', metrics_labels ...
     );
     % Transpose the table (complicated in MATLAB):
@@ -247,21 +247,15 @@ for i_seq = 1:n_in_seqs
         MKF_Y_MSE{f} = size(sim_out.MKF_Y_est{f}, 1);
         % Compute errors in multiple filter state estimates
         % Note: First estimates are at k=1
-        MKF_Y_errors{f} = repmat(Y, 1, obs.n_filt) - sim_out.MKF_Y_est{f};
+        MKF_Y_errors{f} = repmat(Y, 1, obs.nh) - sim_out.MKF_Y_est{f};
         MKF_Y_MSE{f} = mean(MKF_Y_errors{f}(2:end, :).^2, 1);
     end
 
 
     %% Combine all parameters and results and add to summary results file
 
-    % Model parameters
-    sys.name = model_name;
-    sys.A = A;
-    sys.B = B;
-    sys.C = C;
-    sys.D = D;
-    sys.Ts = Ts;
-    sys_params = objects2tablerow(containers.Map({'sys'}, {sys}));
+    % System model parameters
+    sys_params = objects2tablerow(containers.Map({'sys'}, {model}));
 
     % Observer parameters
     rv_params = objects2tablerow( ...
@@ -272,7 +266,8 @@ for i_seq = 1:n_in_seqs
     for f = 1:n_obs
         obs = observers{f};
         params = get_obs_params(obs);
-        obs_params{f} = objects2tablerow(containers.Map({obs.label}, {params}));
+        objects = containers.Map(cellstr(obs.label), {params});
+        obs_params{f} = objects2tablerow(objects);
     end
     obs_params = horzcat(obs_params{:});
 
@@ -361,9 +356,14 @@ end
 % For results plots, run this file next:
 %rod_obs_sim_plots
 
-fprintf("Run rod_obs_sim_plots.m to produce plots.\n")
+fprintf("run rod_obs_sim_plots.m to produce plots.\n")
 
 % To calculate evaluation metrics, run this file:
 %rod_obs_calc_metrics
 
-fprintf("Run rod_obs_calc_metrics.m to calculate evaluation metrics.\n")
+fprintf("run rod_obs_calc_metrics.m to calculate evaluation metrics.\n")
+
+% To plot the step responses, run this file next:
+%rod_obs_step_plots.m
+
+fprintf("run rod_obs_step_plots.m to produce step response summary plot.\n")

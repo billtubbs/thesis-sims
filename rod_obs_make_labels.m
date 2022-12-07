@@ -14,8 +14,8 @@ y_model_labels = vector_element_labels('y_{model}', '(k)', ny, false);
 
 % Combine all input signal labels
 input_labels = repmat({''}, 1, nu);
-input_labels(u_meas') = u_labels;
-input_labels(~u_meas') = p_labels;
+input_labels(u_known') = u_labels;
+input_labels(~u_known') = p_labels;
 
 % Make observer labels into an array
 n_obs = numel(observers);
@@ -25,9 +25,9 @@ obs_labels = cellfun(obs_labels, num2cell(1:n_obs), ...
 
 % Make array of x_est(k), y_est(k) labels
 x_est_labels = vector_element_labels('x_est', '', n, false);
-x_est_plot_labels = vector_element_labels('\hat{x}', '(k|k-1)', n, false);
+x_est_plot_labels = vector_element_labels('\hat{x}', '(k|k)', n, false);
 y_est_labels = vector_element_labels('y_est', '', ny, false);
-y_est_plot_labels = vector_element_labels('\hat{y}', '(k|k-1)', ny, false);
+y_est_plot_labels = vector_element_labels('\hat{y}', '(k|k)', ny, false);
 y_m_plot_labels = vector_element_labels('y_m', '(k)', ny, false);
 
 % Make metrics labels for all observers, e.g. for observer 'KF1':
@@ -43,3 +43,6 @@ for i = 1:n_metrics
     labels = matrix_element_labels(metric_label, y_est_labels, obs_labels, '');
     obs_metrics_labels(i, :) = labels(:)';
 end
+
+% Label for time axis
+t_label = "Time (hours)";
