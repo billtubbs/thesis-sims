@@ -9,8 +9,8 @@
 clear all
 
 % Dependencies:
-addpath('process-observers')
-addpath('plot-utils')
+addpath('~/process-observers')
+addpath('~/ml-plot-utils')
 
 % Sub-directories used
 data_dir = 'data';
@@ -31,7 +31,7 @@ p_case = 1;  % Only case 1 used here
 rod_obs_P2DcTd4
 
 % Select observers to include
-observers = {KF1, KF2, MMKF, SKF};
+observers = {KF1, KF2, MKF_SF95, MKF_SF1, MKF_SP1, SKF};
 n_obs = length(observers);
 
 
@@ -84,7 +84,7 @@ save_fig_to_pdf(fullfile(plot_dir, filename))
 i_in_seq = 3;
 
 % Choose which observers to include in plot
-obs_labels = {'KF1', 'KF2', 'MMKF'};
+obs_labels = {'KF1', 'KF2', 'MKF_SF1'};
 n_obs = numel(obs_labels);
 
 % Load simulation data
@@ -166,7 +166,8 @@ for i = 1:ny
     %xlabel(t_label, 'Interpreter', 'Latex')
     y_label = string2latex(strjoin([y_labels(i) y_est_plot_labels(i)], ', '));
     ylabel(y_label, 'Interpreter','Latex')
-    legend([obs_labels string2latex(y_labels(i))], 'Interpreter', 'Latex', 'Position', [0.39, 0.78, .13, .12])
+    legend([escape_latex_chars(obs_labels) string2latex(y_labels(i))], ...
+        'Interpreter', 'Latex', 'Position', [0.39, 0.78, .13, .12])
     %legend([labels string2latex(y_labels(i))], ...
     %    'Interpreter','Latex', 'Location', 'best')
     %txt = sprintf('(%s) Observer estimates of process output %d', char(96+i), i);
@@ -191,7 +192,8 @@ for i = 1:nw
     xlabel(t_label, 'Interpreter', 'Latex')
     y_label = string2latex(strjoin([p_labels(i) x_est_plot_labels(idx(i))], ', '));
     ylabel(y_label,'Interpreter','Latex')
-    legend([obs_labels string2latex(p_labels(i))], 'Interpreter', 'Latex', 'Position', [0.37, 0.13, .13, .12])
+    legend([escape_latex_chars(obs_labels) string2latex(p_labels(i))], ...
+        'Interpreter', 'Latex', 'Position', [0.37, 0.13, .13, .12])
     %legend([labels string2latex(p_labels(i))], 'Interpreter','Latex', 'Location', 'best')
     txt = sprintf('(%s) Observer estimates of input disturbance %d', char(96+i+2), i);
     %title(txt, 'Interpreter','Latex')

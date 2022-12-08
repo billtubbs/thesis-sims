@@ -37,10 +37,9 @@ p_case = 1;  % Not currently used
 i_in_seq = 6;
 
 % Labels to identify results file
-%sim_label = "popt_SF95";
-%obs_label = "MKF_SF95";
-sim_label = "popt_SF1";
 obs_label = "MKF_SF1";
+%obs_label = "MKF_SF1";
+sim_label = "popt_" + obs_label;
 
 % Load observers
 %rod_obs_P1Dcd4
@@ -56,9 +55,9 @@ rod_obs_P2DcTd4  % observers used in IFAC paper
 
 % Define parameter ranges
 % TODO: Add 7 because it could be good
-nf_values = {1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 30};
+nf_values = {1, 2, 3, 4, 5, 6, 8, 10};
 m_values = {1, 2, 3};
-d_values = {1, 2, 3, 4, 5, 6};
+d_values = {3, 4, 5, 6, 8, 10, 12, 15};
 
 % Determine all possible combinations
 [ndi_idx, m_idx, d_idx] = ndgrid(nf_values, m_values, d_values);
@@ -80,7 +79,7 @@ for i_comb = 1:n_combs
 
     % Long fusion horizon
     f = nf * d;  % fusion horizon
-    if f > 30
+    if f > 50
         selection(i_comb) = false;
     end
     %fprintf("(%d, %d, %d)\n", f, m, d)
@@ -95,7 +94,7 @@ fprintf("%d of %d possible combinations will be tested\n", ...
 n_combs = numel(ndi_idx);
 
 % Start simulations
-for i_comb = 31:n_combs
+for i_comb = 1:n_combs
 
     % Create observer with parameter values
     nf = ndi_idx{i_comb};  % number of detection intervals
@@ -123,14 +122,15 @@ for i_comb = 31:n_combs
     nh_max = 200;
     beta_min = 0.85;
     if (obs.nh_max > nh_max) || (obs.beta < beta_min)
+        fprintf("Rejecting due to nh_max > %d (%d)\n", nh_max, obs.nh_max)
         continue
     end
 
     observers = {obs};
 
     fprintf("\nObserver simulation %d of %d with \n", i_comb, n_combs)
-    fprintf("f: %d, m: %d, d: %d, Input seq.: #%d\n", f, m, d, ...
-        i_in_seq)
+    fprintf("f: %d, m: %d, d: %d, nh: %d, Input seq.: #%d\n", f, m, d, ...
+        obs.nh_max, i_in_seq)
 
     % Load system simulation results
     if i_in_seq < 6
@@ -278,7 +278,7 @@ for i_comb = 31:n_combs
     rmse_table_tr.Properties.RowNames = {'RMSE', ...
         'RMSE in transitions', 'RMSE in steady-state', ...
         'Variance in steady-state', 'RMSD in steady-state'};
-    rmse_table_tr
+    disp(rmse_table_tr)
 
     % Compute errors in MKF observer estimates (if used)
     MKF_Y_errors = cell(size(sim_out.MKF_Y_est));

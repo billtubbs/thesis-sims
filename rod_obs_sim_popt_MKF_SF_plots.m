@@ -24,8 +24,8 @@ if ~isfolder(plot_dir)
 end
 
 % Choose results
-sim_label = "popt_SF95";
-obs_label = "MKF_SF95";
+obs_label = "MKF_SF1";
+sim_label = "popt_" + obs_label;
 
 % Load summary results csv file
 p_case = 1;
@@ -55,7 +55,7 @@ d_unique
 mse_label = sprintf("MSE_y_est_%s", obs_label);
 
 param_labels = compose(strcat(obs_label, "_%s"), ...
-    ["f", "m", "d" "beta", "nh_max"]);
+    ["nf", "f", "m", "d" "beta", "nm", "nh_max"]);
 
 top_20 = sortrows(summary_results, mse_label);
 top_20 = top_20(1:20, :);
@@ -75,17 +75,17 @@ for i = 1:n_plots
     m_selection = (m_values == m);
     
     axs(i) = subplot(n_plots,1,i);
-    
-    d_sel_values = unique(summary_results{m_selection, 'MKF_SF95_d'});
+
+    d_sel_values = unique(summary_results{m_selection, obs_label + "_d"});
     n_lines = numel(d_sel_values);
     labels = {};
     for j = 1:n_lines
         d = d_sel_values(j);
         selection = (d_values == d) & (m_values == m);
-        x_data = summary_results{selection, 'MKF_SF95_f'};
+        x_data = summary_results{selection, obs_label + "_f"};
         if sum(selection) > 0
-            RMSE_values = summary_results{selection, 'MSE_y_est_MKF_SF95'};
-            plot(x_data, RMSE_values, 'o', 'Linewidth', 2); hold on
+            RMSE_values = summary_results{selection, mse_label};
+            plot(x_data, RMSE_values, 'o'); hold on
             labels = [labels sprintf("$d=%d$", d)];
         end
     end
@@ -93,10 +93,10 @@ for i = 1:n_plots
     title(sprintf("(%s) $m=%d$", char(96+i), m), 'Interpreter', 'latex');
     set(gca, 'TickLabelInterpreter', 'latex');
     grid on
-    legend(labels, 'Interpreter', 'latex', 'Location', 'northwest');
-    %if i == n_plots
+    if i == 1
+        legend(labels, 'Interpreter', 'latex', 'Location', 'best');
+    end
     xlabel('$f$', 'Interpreter', 'latex');
-    %end
 
 end
 

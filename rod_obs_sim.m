@@ -80,7 +80,7 @@ for i_seq = 1:n_in_seqs
     % - MMKF : Multi-model Kalman filter observer
     % - SKF : Scheduled Kalman filter
 
-    observers = {KF1, KF2, MMKF, SKF};
+    observers = {KF1, KF2, MKF_SF95, MKF_SF1, MKF_SP1, SKF};
 
     % Load system simulation results
     if i_in_seq < 6
@@ -148,8 +148,9 @@ for i_seq = 1:n_in_seqs
     n_obs = numel(observers);
     n_obs_mkf = 0;
     observers_mkf = double.empty(1, 0);
-    for i=1:n_obs
-        if startsWith(observers{i}.label, "MMKF")
+    for i = 1:n_obs
+        if ismember(observers{i}.type, ...
+                ["MKF_SP_RODD", "MKF_SF_RODD95", "MKF_SF_RODD"])
             n_obs_mkf = n_obs_mkf + 1;
             observers_mkf(n_obs_mkf) = i;
         end
@@ -246,11 +247,11 @@ for i_seq = 1:n_in_seqs
         obs = observers{observers_mkf(f)};
         MKF_Y_MSE{f} = size(sim_out.MKF_Y_est{f}, 1);
         % Compute errors in multiple filter state estimates
-        % Note: First estimates are at k=1
-        MKF_Y_errors{f} = repmat(Y, 1, obs.nh) - sim_out.MKF_Y_est{f};
-        MKF_Y_MSE{f} = mean(MKF_Y_errors{f}(2:end, :).^2, 1);
+        % Find out how many hypotheses were saved
+        nh = size(sim_out.MKF_p_seq_g_Yk{f}, 2);
+        MKF_Y_errors{f} = repmat(Y, 1, nh) - sim_out.MKF_Y_est{f};
+        MKF_Y_MSE{f} = mean(MKF_Y_errors{f}.^2, 1);
     end
-
 
     %% Combine all parameters and results and add to summary results file
 

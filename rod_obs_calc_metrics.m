@@ -28,7 +28,7 @@ p_case = 1;  % Not currently used
 i_in_seqs = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
 % Choose observers to include in calculations
-obs_labels = {'KF1', 'KF2', 'MMKF', 'SKF'};
+obs_labels = {'KF1', 'KF2', 'MKF_SF95', 'MKF_SF1', 'MKF_SP', 'SKF'};
 n_obs = numel(obs_labels);
 
 % Load simulation results from csv file

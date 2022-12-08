@@ -63,7 +63,7 @@ function sim_out = run_obs_simulation(Ts, data, observers)
     MKF_X_est = cell(1, n_obs_mkf);
     MKF_Y_est = cell(1, n_obs_mkf);
     MKF_p_seq_g_Yk = cell(1, n_obs_mkf);
-    
+
     for f = 1:n_obs_mkf
         obs = observers{obs_mkf(f)};
         MKF_i{f} = int16(zeros(size(k)));
