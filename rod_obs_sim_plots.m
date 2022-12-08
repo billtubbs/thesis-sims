@@ -31,7 +31,7 @@ p_case = 1;  % Only case 1 used here
 rod_obs_P2DcTd4
 
 % Select observers to include
-observers = {KF1, KF2, MKF_SF95, MKF_SF1, MKF_SP1, SKF};
+observers = {KF3, MKF_SF95, MKF_SF1, MKF_SP1, SKF};
 n_obs = length(observers);
 
 
@@ -73,7 +73,7 @@ make_iodmplot(Y, Y_m, Y_model, t, [U(:, u_known) Pd], ...
     string2latex([y_labels y_m_labels y_model_labels]), ...
     t_label)
 xlim(t([1 end]))
-set(gcf, 'Position', [100 800 360 240])
+set(gcf, 'Position', [100 800 448 336])
 filename = sprintf('rod_obs_sim_%d_ioplot', i_in_seq);
 save_fig_to_pdf(fullfile(plot_dir, filename))
 
@@ -84,7 +84,7 @@ save_fig_to_pdf(fullfile(plot_dir, filename))
 i_in_seq = 3;
 
 % Choose which observers to include in plot
-obs_labels = {'KF1', 'KF2', 'MKF_SF1'};
+obs_labels = {'KF3', 'MKF_SF1'};
 n_obs = numel(obs_labels);
 
 % Load simulation data
@@ -158,7 +158,7 @@ for i = 1:ny
         labels{j} = sprintf("$%s$ by %s", y_est_plot_labels{i}, obs_labels{j});
     end
     %stairs(t, Y_m(:, i), 'k.')
-    stairs(t, Y(:, i), 'k--', 'Linewidth', 2)
+    stairs(t, Y(:, i), 'k-')
     xlim(t([1 end]))
     %ylim(axes_limits_with_margin([Y Y_est], 0.1))
     ylim([-15 4])
@@ -184,7 +184,7 @@ for i = 1:nw
         plot(t, X_est{j}(:, idx(i)), 'Linewidth', 2); hold on
         labels{j} = sprintf("$%s$ by %s", x_est_plot_labels{idx(i)}, obs_labels{j});
     end
-    stairs(t, Pd(:, i), 'k--', 'Linewidth', 2);
+    stairs(t, Pd(:, i), 'k-');
     xlim(t([1 end]))
     %ylim(axes_limits_with_margin([Pd X_est(:, idx(i)+ + n*(n_obs-1))], 0.1))
     ylim([-0.2 0.5])
@@ -201,6 +201,6 @@ for i = 1:nw
 end
 
 linkaxes(axs, 'x')
-set(gcf, 'Position', [100 600 360 360])
+set(gcf, 'Position', [100 600 448 336])
 filename = sprintf('rod_obs_sim_%d_est.pdf', i_in_seq);
 save_fig_to_pdf(fullfile(plot_dir, filename))

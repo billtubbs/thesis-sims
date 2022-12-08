@@ -28,7 +28,7 @@ p_case = 1;  % Not currently used
 i_in_seqs = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
 % Choose observers to include in calculations
-obs_labels = {'KF1', 'KF2', 'MKF_SF95', 'MKF_SF1', 'MKF_SP', 'SKF'};
+obs_labels = {'KF1', 'KF2', 'KF3', 'MKF_SF95', 'MKF_SF1', 'MKF_SP', 'SKF'};
 n_obs = numel(obs_labels);
 
 % Load simulation results from csv file
@@ -112,3 +112,32 @@ mse_table = array2table(mse_table_data, ...
 fprintf("Observer performance metrics\n")
 disp(mse_table)
 
+
+%% Produce Latex code
+
+% Choose observers to include in Latex RMSE table
+obs_latex = {'KF3', 'MKF_SF95', 'MKF_SF1', 'MKF_SP', 'SKF'};
+
+table_data = mse_table(:, obs_latex);
+
+% 			Metric & KF3 & MKF--SF95 & MKF--SF1 & MKF-SP & SKF \\
+% 			\hline
+% 			RMSE($\hat{\mathbf{Y}},\mathbf{Y}$) overall          & 11.0 & 15.9 & 3.7 & 3.5 & 2.1 \\ 
+% 			RMSE($\hat{\mathbf{Y}},\mathbf{Y}$) transient       & 21.1 & 16.1 & 7.7 & 11.2 & 5.1 \\ 
+% 			RMSE($\hat{\mathbf{Y}},\mathbf{Y}$) steady-state & 7.9 & 15.9 & 2.5 & 1.1 & 1.1 \\ 
+% 			Var($\hat{\mathbf{Y}}$) steady-state          & 1.8 & 15.3 & 1.9 & 0.5 & 0.2 \\ 
+% 			RMSD($\hat{\mathbf{Y}},\mathbf{Y}$) steady-state       & 0.0 & 16.2 & 0.5 & 0.2 & 0.0 \\ 			
+% 			\hline
+
+fprintf("\\hline\n")
+fprintf("RMSE($\\hat{\\mathbf{Y}},\\mathbf{Y}$) overall & ")
+fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'MSE', :}), " & "))
+fprintf("RMSE($\\hat{\\mathbf{Y}},\\mathbf{Y}$) transient & ")
+fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'MSE in transitions', :}), " & "))
+fprintf("RMSE($\\hat{\\mathbf{Y}},\\mathbf{Y}$) steady-state & ")
+fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'MSE in steady-state', :}), " & "))
+fprintf("Var($\\hat{\\mathbf{Y}}$) steady-state & ")
+fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'Variance in steady-state', :}), " & "))
+fprintf("RMSD($\\hat{\\mathbf{Y}},\\mathbf{Y}$) steady-state &")
+fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'MSD in steady-state', :}), " & "))
+fprintf("\\hline\n")

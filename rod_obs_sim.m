@@ -80,7 +80,7 @@ for i_seq = 1:n_in_seqs
     % - MMKF : Multi-model Kalman filter observer
     % - SKF : Scheduled Kalman filter
 
-    observers = {KF1, KF2, MKF_SF95, MKF_SF1, MKF_SP1, SKF};
+    observers = {KF1, KF2, KF3, MKF_SF95, MKF_SF1, MKF_SP1, SKF};
 
     % Load system simulation results
     if i_in_seq < 6

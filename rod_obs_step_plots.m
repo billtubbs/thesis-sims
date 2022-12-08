@@ -5,9 +5,6 @@
 %
 % Author: Bill Tubbs
 %
-% Input files:
-%  - rod_obs_P1D_c4.m - process model and observers
-%
 % Input data:
 %  - Simulation outputs from Simulink model simulations.
 %    See data folder
@@ -69,7 +66,7 @@ for i = 1:summary_data.n_obs
 end
 
 % Select observers to include
-obs_labels = {'KF2', 'MMKF'};
+obs_labels = {'KF3', 'MKF_SF95'};
 n_obs = numel(obs_labels);
 
 obs_data_exists = ismember(obs_labels, obs_sim_labels);
@@ -119,7 +116,7 @@ for f = 1:n_obs
     Y_est_resp_labels = vector_element_labels(label, '', nT_resp);
     Y_est_resp{f2} = resp_data{selection, Y_est_resp_labels}';
     Y_est_med{f2} = nanmedian(Y_est_resp{f2}, 2);
-    y_est_labels_obs{f2} = ['$\hat{y}(k)$ ' obs_labels{f}];
+    y_est_labels_obs{f2} = ['$\hat{y}(k)$ ' escape_latex_chars(obs_labels{f})];
     f2 = f2 + 1;
 end
 
@@ -136,7 +133,7 @@ grid on
 figure(4); clf
 labels = [string2latex(y_labels) y_est_labels_obs];
 make_tsstatplot([{Y_resp} Y_est_resp], t_resp, labels, '$t-t_{step}$');
-set(gcf, 'Position', [100 400 360 240])
+set(gcf, 'Position', [100 400 448 336])
 filename = "rod_obs_sim_resp_plot1.pdf";
 save_fig_to_pdf(fullfile(plot_dir, filename))
 
@@ -159,7 +156,7 @@ for f = 1:n_obs
     Y_est_resp_labels = vector_element_labels(label, '', nT_resp);
     Y_est_resp{f2} = resp_data{selection, Y_est_resp_labels}';
     Y_est_med{f2} = nanmedian(Y_est_resp{f2}, 2);
-    y_est_labels_obs{f2} = ['$\hat{y}(k)$ ' obs_labels{f}];
+    y_est_labels_obs{f2} = ['$\hat{y}(k)$ ' escape_latex_chars(obs_labels{f})];
     f2 = f2 + 1;
 end
 
@@ -177,7 +174,7 @@ grid on
 figure(6); clf
 labels = [string2latex(y_labels) y_est_labels_obs];
 make_tsstatplot([{Y_resp} Y_est_resp], t_resp, labels, '$t-t_{step}$');
-set(gcf, 'Position', [100 200 360 240])
+set(gcf, 'Position', [100 200 448 336])
 filename = "rod_obs_sim_resp_plot2.pdf";
 save_fig_to_pdf(fullfile(plot_dir, filename))
 
