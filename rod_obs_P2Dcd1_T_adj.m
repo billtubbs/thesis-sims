@@ -1,5 +1,21 @@
 %% Observers for multi-model observer simulations
 %
+% This script contains an adjustable model which can be 
+% specified with different parameters.
+%
+% Before running this script define the following variables:
+% Kp : default -35.94
+% Tp1 : default 0.2350
+% Tp2 : default 0.1608
+% thetap : default 0.05
+% epsilon : default 0.01
+% step_mag : default 0.2717
+% b : default 100
+% where sigma_wp = [1/b 1] .* step_mag
+%
+% See original model script for details:
+%  - rod_obs_P2Dcd1_T.m
+
 
 addpath('process-observers')
 
@@ -26,8 +42,9 @@ Ts = 3/60;
 %         Tp1 = 0.23503 +/- 0.017791                                
 %         Tp2 = 0.16076 +/- 0.01594                                 
 %          Td = 0.05                                                
+model_name = 'P2Dcd1_T_adj';
 s = tf('s');
-Gc = -35.94 * exp(-0.05 * s) / ((1 + 0.2350*s) * (1 + 0.1608*s));
+Gc = Kp * exp(-thetap * s) / ((1 + Tp1*s) * (1 + Tp2*s));
 Gc.TimeUnit = 'hours';
 Gd = c2d(Gc, Ts, 'ZOH');
 Gdss = ss(absorbDelay(Gd));
@@ -43,24 +60,31 @@ HDd.TimeUnit = 'hours';
 Gpd = series(Gd, HDd);
 
 % State space representation
-Gpss2 = minreal(absorbDelay(ss(Gpd)));
+Gpss = minreal(absorbDelay(ss(Gpd)));
+A = Gpss.A;
+B = Gpss.B;
+C = Gpss.C;
+D = Gpss.D;
 
 % Discrete time state space model (P1D_c4)
-A = [ 2.5411  -1.0667   0.5923        1
-           2        0        0        0
-           0      0.5        0        0
-           0        0        0        0];
-B = [   0;
-        0;
-        0;
-        1];
-C = [      0 -0.50028 -0.84026        0];
-D = 0;
-Gpss = ss(A, B, C, D, Ts, 'TimeUnit', 'hours');
+% A = [ 2.5411  -1.0667   0.5923        1
+%            2        0        0        0
+%            0      0.5        0        0
+%            0        0        0        0];
+% B = [   0;
+%         0;
+%         0;
+%         1];
+% C = [      0 -0.50028 -0.84026        0];
+% D = 0;
+% Gpss = ss(A, B, C, D, Ts, 'TimeUnit', 'hours');
+
+% Check structure matches requirements for simulations
+assert(isequal(B, [0 0 0 1]'))
 
 % Dimensions
 n = size(A, 1);
-ny = size(C, 1);
+ny = size(Gpss.C, 1);
 
 % Check all versions are almost identical
 wp = zeros(15, 1);
@@ -68,9 +92,9 @@ wp([2 6]) = [1 -1];
 t_test_sim = Ts*(0:14)';
 y1 = lsim(Gpd, wp, t_test_sim);
 y2 = lsim(Gpss, wp, t_test_sim);
-y3 = lsim(Gpss2, wp, t_test_sim);
+%y3 = lsim(Gpss2, wp, t_test_sim);
 assert(max(abs(y1 - y2)) < 0.01)
-assert(max(abs(y1 - y3)) < 0.01)
+%assert(max(abs(y1 - y3)) < 0.01)
 
 % Designate which input and output variables are
 % measured
@@ -84,8 +108,8 @@ x0 = zeros(n, 1);
 %% Parameters for random inputs to simulations
 
 % RODD random variable parameters
-epsilon = 0.01;
-sigma_wp = [0.002717 0.2717];  % [0.01 1] .* step magnitude
+%epsilon = 0.01;
+sigma_wp = [sigma_wp_1 sigma_wp_1*b];
 
 % Process noise standard deviation
 sigma_W = [0; 0];

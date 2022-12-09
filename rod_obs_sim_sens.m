@@ -32,55 +32,113 @@ clear all
 
 % Specify path to observer functions and others
 addpath('~/process-observers')
-addpath('data-utils')
-addpath('plot-utils')
+addpath('~/ml-data-utils')
+addpath('~/ml-plot-utils')
 
 % Sub-directories used
 data_dir = 'data';
-results_dir = 'results';
+results_dir = 'results/sens';
 if ~isfolder(results_dir)
     mkdir(results_dir);
 end
 
 % Specify application case
-p_case = 1;  % Only case 1 used here
+%p_case = 1;  % Vary process model parameters
+p_case = 2;  % Vary RODD model parameters
  
-% Specify which data set(s) to run simulations with
+% Specify which data set to run simulations with
 % I used:
 % - 1 for process model estimation (Fig. 4 in paper)
 % - 2 for process model validation (model selection)
 % - 3 for initial observer test (Fig. 5 in paper)
 % - 5 for observer parameter optimization
 % - 6 to 15 for observer Monte Carlo simulations.
-%i_in_seqs = 3;
-%i_in_seqs = [1, 2, 3, 4, 5];
-%i_in_seqs = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-i_in_seqs = 1:15;
+% - 6 for sensitivity analyses.
+i_in_seq = 6;
+
+switch p_case
+
+    case 1
+
+        % Range of relative uncertainty of parameters
+        var_ratios = [1/2 1/1.5 1/1.15 1 1.15 1.5 2];
+        n_ratios = numel(var_ratios);
+
+        % Set up grid of all param ratio combinations
+        [Kp_ratios, Tp1_ratios] = ndgrid(1:n_ratios, 1:n_ratios);
+        combs = [reshape(Kp_ratios, [], 1) reshape(Tp1_ratios, [], 1)];
+
+    case 2
+        
+        % Range of relative uncertainty of parameters
+        var_ratios = [1/2 1/1.5 1/1.15 1 1.15 1.5 2];
+        n_ratios = numel(var_ratios);
+
+        % Set up grid of all param ratio combinations
+        [epsilon_ratios, sigma_ratios] = ndgrid(1:n_ratios, 1:n_ratios);
+        combs = [reshape(epsilon_ratios, [], 1) reshape(sigma_ratios, [], 1)];
+
+end
 
 % Run observer simulations
-n_in_seqs = numel(i_in_seqs);
-for i_seq = 1:n_in_seqs
+n_combs = size(combs, 1);
+for i_iter = 1:n_combs
 
-    i_in_seq = i_in_seqs(i_seq);
-    fprintf("\nStarting observer simulations with input seq. #%d ...\n", ...
-        i_in_seq)
+    % Combination of variations for this iteration
+    comb = combs(i_iter, :);
+
+    fprintf("\nStarting observer simulation #%d of %d...\n", i_iter, n_combs)
+
+    % Specify observer model parameters
+    switch p_case
+
+        case 1
+
+            % Kp : default -32.4
+            % Tp1 : default 0.106
+            % Tp2 : default 0.106
+            % thetap : default 0.2
+            Kp = -32.4 * var_ratios(comb(1));  % adjusted
+            Tp1 = 0.106 * var_ratios(comb(2));  % adjusted
+            Tp2 = Tp1;  % same as Tp1 (adjusted)
+            thetap = 0.2;  % fixed
+            epsilon = 0.01;  % default
+            sigma_wp_1 = 0.2717 / 100;  % default
+            b = 100;  % default
+
+        case 2
+
+            Kp = -32.4;  % default
+            Tp1 = 0.106;  % default
+            Tp2 = 0.106;  % default
+            thetap = 0.2;  % default
+            % epsilon : default 0.01
+            % step_mag : default 0.2717
+            % b : default 100
+            % sigma_wp_1 : default 0.2717 / 100;
+            % sigma_wp_2 : default 0.2717
+            epsilon = 0.01 * var_ratios(comb(1));  % adjusted
+            sigma_wp_1 = 0.2717 / 100;
+            b = 100 * var_ratios(comb(2));  % adjusted
+
+    end
 
     % Load observers
-    %rod_obs_P1Dcd4
-    %rod_obs_P1
-    %rod_obs_P1DcD5
-    %rod_obs_P2U
-    rod_obs_P2DcTd4  % observers used in IFAC paper
-    %rod_obs_oe125
-    %rod_obs_P2Dcd1_T  % ident. from true outputs
+    % These are adjusted according to parameters specified above
+
+    rod_obs_P2DcTd4_adj  % model identified from data
+    %rod_obs_P2Dcd1_T_adj  % ident. from true outputs
 
     % Choose which observers to simulate
     % - KF1 : Kalman filter tuned to minimize steady-state errors
-    % - KF2 : Kalman filter tuned to minimize overall errors
-    % - MMKF : Multi-model Kalman filter observer
+    % - KF3 : Kalman filter tuned to minimize overall errors
+    % - SKF : Scheduled Kalman filter
+    % - MKF_SF95 : Multiple model observer - sequence fusion
+    % - MKF_SF1 : Multiple model observer - sequence fusion
+    % - MKF_SP1 : Multiple model observer - sequence pruning
     % - SKF : Scheduled Kalman filter
 
-    observers = {KF1, KF2, KF3, MKF_SF95, MKF_SF1, MKF_SP1, SKF};
+    observers = {KF1, KF3, MKF_SF95, MKF_SF1, MKF_SP1, SKF};
 
     % Load system simulation results
     if i_in_seq < 6
@@ -136,9 +194,9 @@ for i_seq = 1:n_in_seqs
 
 
     %% Display and save simulation results
-
+    
     % Remove semi-colon to display results table
-    sim_out.data;
+    sim_out.data
 
     filename = sprintf('rod_obs_sim_%d_%d.csv', p_case, i_in_seq);
     writetable(drop_empty_cols(sim_out.data), fullfile(results_dir, filename));
@@ -148,14 +206,14 @@ for i_seq = 1:n_in_seqs
     n_obs = numel(observers);
     n_obs_mkf = 0;
     observers_mkf = double.empty(1, 0);
-    for i = 1:n_obs
-        if ismember(observers{i}.type, ...
-                ["MKF_SP_RODD", "MKF_SF_RODD95", "MKF_SF_RODD"])
+    for i=1:n_obs
+        if startsWith(observers{i}.label, "MMKF")
             n_obs_mkf = n_obs_mkf + 1;
             observers_mkf(n_obs_mkf) = i;
         end
     end
 
+    % Simulation results into variables
     t = sim_out.data{:,'t'};
     U = sim_out.data{:,'U'};
     alpha = sim_out.data{:, 'alpha'};
@@ -177,9 +235,10 @@ for i_seq = 1:n_in_seqs
 
         filename = sprintf('rod_obs_sim_%d_%d_%s.csv', p_case, i_in_seq, label);
         writetable(drop_empty_cols(MKF_sim_results), fullfile(results_dir, filename));
-        fprintf("MKF simulation results saved to file: %s\n", filename)
 
     end
+    
+    fprintf("MKF simulation results saved to file: %s\n", filename)
 
 
     %% Prepare labels for tables and plots
@@ -207,7 +266,6 @@ for i_seq = 1:n_in_seqs
         labels = matrix_element_labels(metric_label, y_est_labels, obs_labels, '');
         obs_metrics_labels(i, :) = labels(:)';
     end
-
 
     %% Display MSE results
 
@@ -262,9 +320,17 @@ for i_seq = 1:n_in_seqs
             n_obs*n_metrics), 'VariableNames', obs_metrics_labels);
     ];
 
+    % Add additional variables from process model
+    if p_case == 1
+        extra_vars = table(Kp, Tp1);
+    else
+        extra_vars = table();
+    end
+
     % Summary table
     summary_results = [ ...
         array2tablerow(datetime(), 'Time') ...
+        extra_vars ...
         sim_params ...
         sys_params ...
         array2tablerow(obs_labels, 'obs') ...
@@ -274,7 +340,7 @@ for i_seq = 1:n_in_seqs
     ];
 
     % Save to csv file
-    filename = sprintf('rod_obs_sim_%d_summary.csv', p_case);
+    filename = sprintf('rod_obs_sim_sens_%d_summary.csv', p_case);
     if isfile(fullfile(results_dir, filename))
         % Load existing results and combine
         resp_data_existing = readtable(fullfile(results_dir, filename));
@@ -285,52 +351,53 @@ for i_seq = 1:n_in_seqs
     % Save all results to file
     writetable(drop_empty_cols(summary_results), fullfile(results_dir, filename));
     fprintf("Summary results saved to file: %s\n", filename)
-    
-    
-    %% Compute disturbance response trajectories
 
-    % Choose length of responses in sample periods
-    nT_resp = 51;  % 0 to 1.5 hrs
 
-    % Find step changes in disturbance
-    [idxs, diffs] = find_step_periods(Pd, metrics_params.n_settle, nT_resp);
-    n_resp = numel(idxs);
-    fprintf("Step responses identified: %d\n", n_resp)
-    Y_resps = nan(nT_resp, n_resp);
-    Y_est_resps = repmat({nan(nT_resp, n_resp*1)}, 1, n_obs);
-    for i = 1:n_resp
-        idx = idxs{i};
-        nT_max = min(diff(idx)+1, nT_resp);
-        Y_resps(:, i) = Y(idx(1):idx(1)+nT_max-1);
-        for f = 1:n_obs
-            Y_est_resps{f}(:, i) = Y_est(idx(1):idx(1)+nT_max-1, ...
-                (f-1)*ny+1:f*ny);
-        end
-    end
-    % Convert Y_est_resp_obs to tables
-    for f = 1:n_obs
-        label = strcat('yk_est_', obs_labels{f});
-        Y_est_resps{f} = array2table_with_name(Y_est_resps{f}', label, '_');
-    end
-    resp_data = [ ...
-        array2table_with_name(repmat(i_in_seq, n_resp, 1), 'i_in_seq', '_') ...
-        table(diffs) ...
-        array2table_with_name(Y_resps', 'yk', '_') ...
-        horzcat(Y_est_resps{:}) ...
-    ];
-
-    % Save to csv file
-    filename = sprintf('rod_obs_sim_%d_resps.csv', p_case);
-    if isfile(fullfile(results_dir, filename))
-        % Load existing results and combine
-        resp_data_existing = readtable(fullfile(results_dir, filename));
-        fprintf("Existing step responses loaded from file: %s\n", filename)
-        resp_data = vertcat(resp_data_existing, resp_data);
-    end
-
-    % Save all results to file
-    writetable(drop_empty_cols(resp_data), fullfile(results_dir, filename));
-    fprintf("Step responses saved to file: %s\n", filename)
+     %% Compute disturbance response trajectories
+%     % remove to save time
+% 
+%     % Choose length of responses in sample periods
+%     nT_resp = 51;  % 0 to 1.5 hrs
+% 
+%     % Find step changes in disturbance
+%     [idxs, diffs] = find_step_periods(Pd, metrics_params.n_settle, nT_resp);
+%     n_resp = numel(idxs);
+%     fprintf("Step responses identified: %d\n", n_resp)
+%     Y_resps = nan(nT_resp, n_resp);
+%     Y_est_resps = repmat({nan(nT_resp, n_resp*1)}, 1, n_obs);
+%     for i = 1:n_resp
+%         idx = idxs{i};
+%         nT_max = min(diff(idx)+1, nT_resp);
+%         Y_resps(:, i) = Y(idx(1):idx(1)+nT_max-1);
+%         for f = 1:n_obs
+%             Y_est_resps{f}(:, i) = Y_est(idx(1):idx(1)+nT_max-1, ...
+%                 (f-1)*ny+1:f*ny);
+%         end
+%     end
+%     % Convert Y_est_resp_obs to tables
+%     for f = 1:n_obs
+%         label = strcat('yk_est_', obs_labels{f});
+%         Y_est_resps{f} = array2table_with_name(Y_est_resps{f}', label, '_');
+%     end
+%     resp_data = [ ...
+%         array2table_with_name(repmat(i_in_seq, n_resp, 1), 'i_in_seq', '_') ...
+%         table(diffs) ...
+%         array2table_with_name(Y_resps', 'yk', '_') ...
+%         horzcat(Y_est_resps{:}) ...
+%     ];
+% 
+%     % Save to csv file
+%     filename = sprintf('rod_obs_sim_%d_resps.csv', p_case);
+%     if isfile(fullfile(results_dir, filename))
+%         % Load existing results and combine
+%         resp_data_existing = readtable(fullfile(results_dir, filename));
+%         fprintf("Existing step responses loaded from file: %s\n", filename)
+%         resp_data = vertcat(resp_data_existing, resp_data);
+%     end
+% 
+%     % Save all results to file
+%     writetable(drop_empty_cols(resp_data), fullfile(results_dir, filename));
+%     fprintf("Step responses saved to file: %s\n", filename)
 
 end
 
@@ -338,14 +405,9 @@ end
 % For results plots, run this file next:
 %rod_obs_sim_plots
 
-fprintf("run rod_obs_sim_plots.m to produce plots.\n")
+fprintf("Run rod_obs_sim_plots.m to produce plots.\n")
 
 % To calculate evaluation metrics, run this file:
 %rod_obs_calc_metrics
 
-fprintf("run rod_obs_calc_metrics.m to calculate evaluation metrics.\n")
-
-% To plot the step responses, run this file next:
-%rod_obs_step_plots.m
-
-fprintf("run rod_obs_step_plots.m to produce step response summary plot.\n")
+fprintf("Run rod_obs_calc_metrics.m to calculate evaluation metrics.\n")

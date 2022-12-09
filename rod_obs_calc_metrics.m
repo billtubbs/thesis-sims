@@ -51,7 +51,7 @@ if ~all(ismember(i_in_seqs, results_found))
 end
 
 % Check the metrics were produced with the same assumptions
-tau_ss = summary_results{selection, 'tau_ss'};
+tau_ss = summary_results{selection, 'metrics_tau_ss'};
 assert(all(tau_ss == tau_ss(1)))
 nu = summary_results{selection, 'nu'};
 assert(all(nu == nu(1)))
@@ -63,54 +63,54 @@ ny = ny(1);
 y_est_labels = vector_element_labels('y_est', '', ny, false);
 
 % Counts of metrics
-nT_Y_MSE = summary_results{selection, 'nT_Y_MSE'};
-nT_Y_MSE_tr = summary_results{selection, 'nT_Y_MSE_tr'};
-nT_Y_MSE_ss = summary_results{selection, 'nT_Y_MSE_ss'};
+nT_Y_MSE = summary_results{selection, 'metrics_nT_Y_RMSE'};
+nT_Y_MSE_tr = summary_results{selection, 'metrics_nT_Y_RMSE_tr'};
+nT_Y_MSE_ss = summary_results{selection, 'metrics_nT_Y_RMSE_ss'};
 
 % Make summary metrics averaged over all simulations
-metrics_labels = {'MSE', 'MSE_tr', 'MSE_ss', 'Var_ss', 'MSD_ss'};
+metrics_labels = {'RMSE', 'RMSE_tr', 'RMSE_ss', 'Var_ss', 'RMSD_ss'};
 n_metrics = numel(metrics_labels);
 obs_metrics_labels = cell(n_metrics, n_obs * ny);
-mse_table_data = nan(n_metrics, n_obs);
+rmse_table_data = nan(n_metrics, n_obs);
 for f = 1:n_obs
     obs_label = obs_labels{f};
 
-    labels = matrix_element_labels('MSE', y_est_labels, {obs_label}, '');
+    labels = matrix_element_labels('RMSE', y_est_labels, {obs_label}, '');
     labels = labels(:)';
-    Y_MSE = summary_results{selection, labels};
+    Y_RMSE = summary_results{selection, labels};
 
-    labels = matrix_element_labels('MSE_tr', y_est_labels, {obs_label}, '');
+    labels = matrix_element_labels('RMSE_tr', y_est_labels, {obs_label}, '');
     labels = labels(:)';
-    Y_MSE_tr = summary_results{selection, labels};
+    Y_RMSE_tr = summary_results{selection, labels};
 
-    labels = matrix_element_labels('MSE_ss', y_est_labels, {obs_label}, '');
+    labels = matrix_element_labels('RMSE_ss', y_est_labels, {obs_label}, '');
     labels = labels(:)';
-    Y_MSE_ss = summary_results{selection, labels};
+    Y_RMSE_ss = summary_results{selection, labels};
 
     labels = matrix_element_labels('Var_ss', y_est_labels, {obs_label}, '');
     labels = labels(:)';
     Y_Var_ss = summary_results{selection, labels};
     
-    labels = matrix_element_labels('MSD_ss', y_est_labels, {obs_label}, '');
+    labels = matrix_element_labels('RMSD_ss', y_est_labels, {obs_label}, '');
     labels = labels(:)';
-    Y_MSD_ss = summary_results{selection, labels};
+    Y_RMSD_ss = summary_results{selection, labels};
 
-    Y_MSE = sum(Y_MSE .* nT_Y_MSE) ./ sum(nT_Y_MSE);
-    Y_MSE_tr = sum(Y_MSE_tr .* nT_Y_MSE_tr) ./ sum(nT_Y_MSE_tr);
-    Y_MSE_ss = sum(Y_MSE_ss .* nT_Y_MSE_ss) ./ sum(nT_Y_MSE_ss);
+    Y_RMSE = sum(Y_RMSE .* nT_Y_MSE) ./ sum(nT_Y_MSE);
+    Y_RMSE_tr = sum(Y_RMSE_tr .* nT_Y_MSE_tr) ./ sum(nT_Y_MSE_tr);
+    Y_RMSE_ss = sum(Y_RMSE_ss .* nT_Y_MSE_ss) ./ sum(nT_Y_MSE_ss);
     Y_Var_ss = sum(Y_Var_ss .* nT_Y_MSE_ss) ./ sum(nT_Y_MSE_ss);
-    Y_MSD_ss = sum(Y_MSD_ss .* nT_Y_MSE_ss) ./ sum(nT_Y_MSE_ss);
-    mse_table_data(:, f) = [Y_MSE; Y_MSE_tr; Y_MSE_ss; Y_Var_ss; Y_MSD_ss];
+    Y_RMSD_ss = sum(Y_RMSD_ss .* nT_Y_MSE_ss) ./ sum(nT_Y_MSE_ss);
+    rmse_table_data(:, f) = [Y_RMSE; Y_RMSE_tr; Y_RMSE_ss; Y_Var_ss; Y_RMSD_ss];
 end
 
 % Display summary table
-mse_table = array2table(mse_table_data, ...
-    'RowNames', {'MSE', 'MSE in transitions', 'MSE in steady-state', ...
-        'Variance in steady-state', 'MSD in steady-state'}, ...
+rmse_table = array2table(rmse_table_data, ...
+    'RowNames', {'RMSE', 'RMSE in transitions', 'RMSE in steady-state', ...
+        'Variance in steady-state', 'RMSD in steady-state'}, ...
     'VariableNames', obs_labels ...
 );
 fprintf("Observer performance metrics\n")
-disp(mse_table)
+disp(rmse_table)
 
 
 %% Produce Latex code
@@ -118,7 +118,7 @@ disp(mse_table)
 % Choose observers to include in Latex RMSE table
 obs_latex = {'KF3', 'MKF_SF95', 'MKF_SF1', 'MKF_SP', 'SKF'};
 
-table_data = mse_table(:, obs_latex);
+table_data = rmse_table(:, obs_latex);
 
 % 			Metric & KF3 & MKF--SF95 & MKF--SF1 & MKF-SP & SKF \\
 % 			\hline
@@ -129,15 +129,19 @@ table_data = mse_table(:, obs_latex);
 % 			RMSD($\hat{\mathbf{Y}},\mathbf{Y}$) steady-state       & 0.0 & 16.2 & 0.5 & 0.2 & 0.0 \\ 			
 % 			\hline
 
+fprintf("Latex table code:\n")
 fprintf("\\hline\n")
+fprintf("%% See script rod_obs_calc_metrics.m\n")
+fprintf("%% %s results with system %s, sigma_M = %g\n", ...
+    datetime(), string(summary_results{1, 'sys_name'}), summary_results{1, 'sigma_M'})
 fprintf("RMSE($\\hat{\\mathbf{Y}},\\mathbf{Y}$) overall & ")
-fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'MSE', :}), " & "))
+fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'RMSE', :}), " & "))
 fprintf("RMSE($\\hat{\\mathbf{Y}},\\mathbf{Y}$) transient & ")
-fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'MSE in transitions', :}), " & "))
+fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'RMSE in transitions', :}), " & "))
 fprintf("RMSE($\\hat{\\mathbf{Y}},\\mathbf{Y}$) steady-state & ")
-fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'MSE in steady-state', :}), " & "))
+fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'RMSE in steady-state', :}), " & "))
 fprintf("Var($\\hat{\\mathbf{Y}}$) steady-state & ")
 fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'Variance in steady-state', :}), " & "))
 fprintf("RMSD($\\hat{\\mathbf{Y}},\\mathbf{Y}$) steady-state &")
-fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'MSD in steady-state', :}), " & "))
+fprintf("%s \\\\\n", strjoin(compose("%.2f", table_data{'RMSD in steady-state', :}), " & "))
 fprintf("\\hline\n")

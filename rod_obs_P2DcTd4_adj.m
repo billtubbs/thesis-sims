@@ -1,7 +1,22 @@
 %% Observers for multi-model observer simulations
 %
+% This script contains an adjustable model which can be 
+% specified with different parameters.
+%
+% Before running this script define the following variables:
+% Kp : default -32.4
+% Tp1 & Tp2 : default 0.106
+% thetap : default 0.2
+% epsilon : default 0.01
+% step_mag : default 0.2717
+% b : default 100
+% where sigma_wp = [1/b 1] .* step_mag
+%
+% See original model script for details:
+%  - rod_obs_P2DcTd4.m
 
-%addpath('process-observers')
+
+addpath('process-observers')
 
 
 %% Process and disturbance models
@@ -28,15 +43,10 @@ Ts = 3/60;
 %
 model_name = 'P2DcTd4';
 s = tf('s');
-Gc = -32.4 * exp(-0.2 * s) / (1 + 0.106*s)^2;
+Gc = Kp * exp(-thetap * s) / ((1 + Tp1*s) * (1 + Tp2*s));
 Gc.TimeUnit = 'hours';
 Gd = c2d(Gc, Ts, 'ZOH');
-Gdss = absorbDelay(ss(Gd));
-
-% Alternatively
-Gd2 = c2d(tf(-32.4, conv([0.106 1], [0.106 1])), Ts);
-Gd2.InputDelay = 4;
-Gdss2 = absorbDelay(ss(Gd));
+Gdss = ss(absorbDelay(Gd));
 
 % RODD step disturbance process
 ThetaD = 1;
@@ -49,35 +59,43 @@ HDd.TimeUnit = 'hours';
 Gpd = series(Gd, HDd);
 
 % State space representation
-Gpss2 = minreal(absorbDelay(ss(Gpd)));
+Gpss = minreal(absorbDelay(ss(Gpd)));
+model.A = Gpss.A;
+model.B = Gpss.B;
+model.C = Gpss.C;
+model.D = Gpss.D;
+model.Ts = Gpss.Ts;
 
-% Discrete time state space model (P1D_c4)
-model = struct();
-model.name = 'P2DcTd4';
-model.A = [
-    1.248  -0.7786        4        0        0        0        0
-      0.5        0        0        0        0        0        0
-        0        0        0        1        0        0        0
-        0        0        0        0        1        0        0
-        0        0        0        0        0        1        0
-        0        0        0        0        0        0        1
-        0        0        0        0        0        0        1
-];
-model.B = [
-    0
-    0
-    0
-    0
-    0
-    0
-    1
-];
-model.C = [
-    -0.66214  -0.96672       0       0       0       0       0
-];
-model.D = 0;
-model.Ts = Ts;
-Gpss = ss(model.A, model.B, model.C, model.D, Ts, 'TimeUnit', 'hours');
+% % Discrete time state space model (P1D_c4)
+% model = struct();
+% model.name = 'P2DcTd4';
+% model.A = [
+%     1.248  -0.7786        4        0        0        0        0
+%       0.5        0        0        0        0        0        0
+%         0        0        0        1        0        0        0
+%         0        0        0        0        1        0        0
+%         0        0        0        0        0        1        0
+%         0        0        0        0        0        0        1
+%         0        0        0        0        0        0        1
+% ];
+% model.B = [
+%     0
+%     0
+%     0
+%     0
+%     0
+%     0
+%     1
+% ];
+% model.C = [
+%     -0.66214  -0.96672       0       0       0       0       0
+% ];
+% model.D = 0;
+% model.Ts = Ts;
+% Gpss = ss(model.A, model.B, model.C, model.D, Ts, 'TimeUnit', 'hours');
+
+% Check structure matches requirements for simulations
+assert(isequal(model.B, [0 0 0 0 0 0 1]'))
 
 % Dimensions
 [n, ~, ny] = check_dimensions(model.A, model.B, model.C, model.D);
@@ -88,9 +106,9 @@ wp([2 6]) = [1 -1];
 t_test_sim = Ts*(0:14)';
 y1 = lsim(Gpd, wp, t_test_sim);
 y2 = lsim(Gpss, wp, t_test_sim);
-y3 = lsim(Gpss2, wp, t_test_sim);
-assert(max(abs(y1 - y2)) < 0.05)
-assert(max(abs(y1 - y3)) < 0.05)
+%y3 = lsim(Gpss2, wp, t_test_sim);
+assert(max(abs(y1 - y2)) < 0.01)
+%assert(max(abs(y1 - y3)) < 0.01)
 
 % Designate which input and output variables are
 % measured
@@ -104,8 +122,8 @@ x0 = zeros(n, 1);
 %% Parameters for random inputs to simulations
 
 % RODD random variable parameters
-epsilon = 0.01;
-sigma_wp = {[0.002717 0.2717]};  % step magnitude
+%epsilon = 0.01;
+sigma_wp = {[sigma_wp_1 sigma_wp_1*b]};
 
 % Process noise standard deviation
 sigma_W = [0; 0];
@@ -200,3 +218,4 @@ MKF_SP1 = MKFObserverSP_RODD(model,io,P0,epsilon,sigma_wp, ...
     Q0,R,nh,n_min,'MKF_SP');
 
 observers = {KF1, KF2, KF3, SKF, MKF_SF95, MKF_SF1, MKF_SP1};
+
