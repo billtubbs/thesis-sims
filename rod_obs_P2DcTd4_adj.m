@@ -32,14 +32,14 @@ Ts = 3/60;
 
 % Continuous time process model from system identification - P2DcTd4
 %
-%                 Kp                                                
-%   G(s) = ----------------- * exp(-Td*s)                           
-%          (1+Tp1*s)(1+Tp2*s)                                       
-%                                                                   
-%          Kp = -32.401 +/- 1.8524                                  
-%         Tp1 = 0.106                                               
-%         Tp2 = 0.10586 +/- 0.036592                                
-%          Td = 0.2                                                 
+%                 Kp
+%   G(s) = ----------------- * exp(-Td*s)
+%          (1+Tp1*s)(1+Tp2*s)
+%
+%          Kp = -32.401 +/- 1.8524
+%         Tp1 = 0.106
+%         Tp2 = 0.10586 +/- 0.036592
+%          Td = 0.2 
 %
 model_name = 'P2DcTd4';
 s = tf('s');
@@ -60,6 +60,7 @@ Gpd = series(Gd, HDd);
 
 % State space representation
 Gpss = minreal(absorbDelay(ss(Gpd)));
+model = struct();
 model.A = Gpss.A;
 model.B = Gpss.B;
 model.C = Gpss.C;
@@ -176,22 +177,22 @@ obs_model1.R = R;
 KF1 = KalmanFilterF(obs_model1,P0,'KF1');
 
 % Kalman filter 2 - tuned to sigma_wp(2)
-obs_model3 = obs_model;
-obs_model3.Q = diag([q00*ones(1, n-1) sigma_wp{1}(2)^2]);
-obs_model3.R = R;
-KF2 = KalmanFilterF(obs_model3,P0,'KF2');
+obs_model2 = obs_model;
+obs_model2.Q = diag([q00*ones(1, n-1) sigma_wp{1}(2)^2]);
+obs_model2.R = R;
+KF2 = KalmanFilterF(obs_model2,P0,'KF2');
 
 % Kalman filter 3 - manually tuned
-obs_model2 = obs_model;
-obs_model2.Q = diag([q00*ones(1, n-1) 0.027^2]);
-obs_model2.R = R;
-KF3 = KalmanFilterF(obs_model2,P0,'KF3');
+obs_model3 = obs_model;
+obs_model3.Q = diag([q00*ones(1, n-1) 0.027^2]);
+obs_model3.R = R;
+KF3 = KalmanFilterF(obs_model3,P0,'KF3');
 
 % Switching models
-obs_models = {obs_model1, obs_model3};
+obs_models = {obs_model1, obs_model2};
 
 % Scheduled Kalman filter
-% Use this to test performence of multi-model filters
+% Use this to test performance of multi-model filters
 SKF = SKFObserver(obs_models,P0,'SKF');
 
 % Multiple model observer - sequence fusion

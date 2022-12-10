@@ -1,5 +1,5 @@
-% Simulate the MKF_SP_RODD observer on simulated measurement data
-% from grinding simulation model with a range of different
+% Simulate the MKF_SP_RODD observer on simulated measurement 
+% data from grinding simulation model with a range of different
 % parameter settings for optimization.
 %
 % Input files:
@@ -32,12 +32,13 @@ p_case = 1;  % Not currently used
 % - 1 for process model estimation (Fig. 4 in paper)
 % - 2 for process model validation (model selection)
 % - 3 for initial observer test (Fig. 5 in paper)
-% - 5 for observer parameter optimization
+% - 5 for observer parameter optimization - no use 6!
 % - 6 to 15 for observer Monte Carlo simulations.
-i_in_seq = 5;
+i_in_seq = 6;
 
-% Label to identify results file
-sim_label = 'popt_SP';
+% Labels to identify results file
+obs_label = "MKF_SP1";
+sim_label = "popt_" + obs_label;
 
 % Load observers
 %rod_obs_P1Dcd4
@@ -52,10 +53,12 @@ rod_obs_P2DcTd4  % observers used in IFAC paper
 %  - sim_experiment_ore_switching.m
 
 % Define parameter ranges
-nh_values = {10, 15, 20, 25, 30};
-n_min_values = {3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 29};
+nh_values = {10, 15, 20, 25, 30, 40, 50};
 
-[nh_idx, n_min_idx] = ndgrid(nh_values, n_min_values);
+% In this case vary the difference between nh_values and n_min
+n_min_diff_values = {1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18, 22, 26, 30};
+
+[nh_idx, n_min_diff_idx] = ndgrid(nh_values, n_min_diff_values);
 n_combs = numel(nh_idx);
 
 
@@ -63,16 +66,19 @@ for i_comb = 1:n_combs
 
     % Create observer with parameter values
     nh = nh_idx{i_comb};  % number of filters
-    n_min = n_min_idx{i_comb};  % minimum life of cloned filters
+    n_min_diff = n_min_diff_idx{i_comb};  % minimum life of cloned filters
+    n_min = nh - n_min_diff;
 
     % Reject combination if it does not meet criteria
-    if nh <= n_min
+    if n_min <= 0
         continue
     end
 
     % Choose the observer to simulate
-    obs = MKF_SP;
-    assert(startsWith(obs.label, 'MMKF'))
+    i_obs = find(cellfun(@(obs) strcmp(obs.label, obs_label), observers));
+    assert(numel(i_obs) == 1)
+    obs = observers{i_obs};
+    assert(strcmp(obs.type, 'MKF_SP_RODD'))
 
     % Re-initialize observer - sequence pruning
     obs = MKFObserverSP_RODD(model,io,obs.P0,obs.epsilon,obs.sigma_wp, ...
@@ -178,69 +184,48 @@ for i_comb = 1:n_combs
     %% Prepare labels for tables and plots
 
     rod_obs_make_labels
-    
+
 
     %% Compute observer performance metrics
 
-    % Errors in observer state estimates
-    Y_errors = repmat(Y, 1, n_obs) - Y_est;
+    % The following script uses the values stored in
+    [metrics, metrics_params, errors, metrics_labels] = calculate_obs_metrics(Y, Y_est, ...
+        obs_labels, Pd, Ts);
 
-    % Mean-squared errors
-    Y_MSE = mean(Y_errors.^2, 1);
-
-    % Calculate metrics for steady-state periods and after steps
-    tau_ss = 0.43*3;  % approximate settling time
-    n_settle = ceil(tau_ss/Ts);
-    ss_periods = steady_state_periods(Pd, n_settle);
-    Y_MSE_tr = mean(Y_errors(~ss_periods,:).^2, 1);
-    Y_MSE_ss = mean(Y_errors(ss_periods,:).^2, 1);
-
-    % Record number of samples in MSE calculations
-    nT_Y_MSE = size(Y_errors, 1);
-    nT_Y_MSE_tr = sum(~ss_periods);
-    nT_Y_MSE_ss = sum(ss_periods);
-    assert(nT_Y_MSE_tr + nT_Y_MSE_ss == nT_Y_MSE)
-
-    % Calculate variance of estimates during steady-state periods
-    trans_idxs = transition_periods(Pd);
-    n_resp = numel(trans_idxs);
-    sq_devs = nan(size(Y_est));
-    for i = 1:n_resp
-        idx = trans_idxs{i};
-        idx1 = idx(1) + n_settle - 1;
-        avgs = mean(Y_est(idx1:idx(2), :));
-        sq_devs(idx1:idx(2), :) = (Y_est(idx1:idx(2), :) - avgs).^2;
+    % Make metrics labels for all observers, e.g. for observer 'KF1':
+    %  - 'MSE_y_est_KF1' : overall MSE
+    %  - 'MSE_tr_y_est_KF1' : MSE in transition periods
+    %  - 'MSE_ss_y_est_KF1' :  MSE in steady-state periods
+    %  - 'Var_ss_y_est_KF1' : Variance in steady-state periods
+    n_metrics = numel(metrics_labels);
+    obs_metrics_labels = cell(n_metrics, n_obs * ny);
+    for i = 1:n_metrics
+        metric_label = metrics_labels{i};
+        labels = matrix_element_labels(metric_label, y_est_labels, obs_labels, '');
+        obs_metrics_labels(i, :) = labels(:)';
     end
-    sq_devs = sq_devs(~isnan(sq_devs(:, 1)), :);
-    Y_var_ss = mean(sq_devs);
 
-    % Calculate mean-squared differences
-    Y_diffs = [nan(1, size(Y_est, 2)); diff(Y_est, 1)];
-    Y_MSD_ss = mean(Y_diffs(ss_periods,:).^2, 1, 'omitnan');
+    %% Display RMSE results
 
-    % Display summary table
-    mse_table = array2table([Y_MSE' Y_MSE_tr' Y_MSE_ss' Y_var_ss' Y_MSD_ss'], ...
-        'RowNames', string(obs_labels), ...
-        'VariableNames', metrics_labels ...
-    );
     % Transpose the table (complicated in MATLAB):
-    mse_table_tr = rows2vars(mse_table);
-    mse_table_tr = removevars(mse_table_tr, 'OriginalVariableNames');
-    mse_table_tr.Properties.RowNames = {'MSE', ...
-        'MSE in transitions', 'MSE in steady-state', ...
-        'Variance in steady-state', 'MSD in steady-state'};
-    mse_table_tr
+    rmse_table_tr = rows2vars(metrics);
+    rmse_table_tr = removevars(rmse_table_tr, 'OriginalVariableNames');
+    rmse_table_tr.Properties.RowNames = {'RMSE', ...
+        'RMSE in transitions', 'RMSE in steady-state', ...
+        'Variance in steady-state', 'RMSD in steady-state'};
+    disp(rmse_table_tr)
 
     % Compute errors in MKF observer estimates (if used)
     MKF_Y_errors = cell(size(sim_out.MKF_Y_est));
-    MKF_Y_MSE = cell(1, n_obs_mkf);
+    MKF_Y_RMSE = cell(1, n_obs_mkf);
     for f = 1:n_obs_mkf
         obs = observers{observers_mkf(f)};
-        MKF_Y_MSE{f} = size(sim_out.MKF_Y_est{f}, 1);
+        MKF_Y_RMSE{f} = size(sim_out.MKF_Y_est{f}, 1);
         % Compute errors in multiple filter state estimates
-        % Note: First estimates are at k=1
-        MKF_Y_errors{f} = repmat(Y, 1, obs.nh) - sim_out.MKF_Y_est{f};
-        MKF_Y_MSE{f} = mean(MKF_Y_errors{f}(2:end, :).^2, 1);
+        % Find out how many hypotheses were saved
+        nh = size(sim_out.MKF_p_seq_g_Yk{f}, 2);
+        MKF_Y_errors{f} = repmat(Y, 1, nh) - sim_out.MKF_Y_est{f};
+        MKF_Y_RMSE{f} = mean(MKF_Y_errors{f}.^2, 1);
     end
 
 
@@ -267,8 +252,9 @@ for i_comb = 1:n_combs
     sim_params = table(p_case, i_in_seq, t_stop, Ts, nT, nu, ny, n_obs);
 
     % Observer metrics
-    obs_metrics = [table(tau_ss, nT_Y_MSE, nT_Y_MSE_tr, nT_Y_MSE_ss) ...
-        array2table(reshape(mse_table.Variables', [], ...
+    obs_metrics = [ ...
+        objects2tablerow(containers.Map({'metrics'}, {metrics_params})) ...
+        array2table(reshape(metrics.Variables', [], ...
             n_obs*n_metrics), 'VariableNames', obs_metrics_labels);
     ];
 
@@ -299,9 +285,9 @@ for i_comb = 1:n_combs
 end
 
 
-%% For results plots, run this file
+% To plot results of popt run this script
 
-%rod_obs_sim_plots
+%rod_obs_sim_popt_MKF_SP_plots
 
 
 

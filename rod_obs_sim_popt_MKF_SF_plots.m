@@ -26,9 +26,9 @@ end
 % Choose results
 obs_label = "MKF_SF1";
 sim_label = "popt_" + obs_label;
+p_case = 1;
 
 % Load summary results csv file
-p_case = 1;
 filename = sprintf("rod_obs_sim_%s_%d_summary.csv", sim_label, p_case);
 summary_results = readtable(fullfile(results_dir, filename));
 

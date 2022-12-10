@@ -37,8 +37,8 @@ p_case = 1;  % Not currently used
 i_in_seq = 6;
 
 % Labels to identify results file
+%obs_label = "MKF_SF95";
 obs_label = "MKF_SF1";
-%obs_label = "MKF_SF1";
 sim_label = "popt_" + obs_label;
 
 % Load observers
@@ -106,7 +106,7 @@ for i_comb = 1:n_combs
     i_obs = find(cellfun(@(obs) strcmp(obs.label, obs_label), observers));
     assert(numel(i_obs) == 1)
     obs = observers{i_obs};
-    assert(startsWith(obs.label, "MKF_SF"))
+    assert(ismember(obs.type, ["MKF_SF_RODD95" "MKF_SF_RODD"]))
 
     % Re-initialize observer - sequence fusion
     switch obs.type
@@ -227,53 +227,31 @@ for i_comb = 1:n_combs
     %% Prepare labels for tables and plots
 
     rod_obs_make_labels
-    
+
 
     %% Compute observer performance metrics
 
-    % Errors in observer state estimates
-    Y_errors = repmat(Y, 1, n_obs) - Y_est;
+    % The following script uses the values stored in
+    [metrics, metrics_params, errors, metrics_labels] = calculate_obs_metrics(Y, Y_est, ...
+        obs_labels, Pd, Ts);
 
-    % Mean-squared errors
-    Y_RMSE = sqrt(mean(Y_errors.^2, 1));
-
-    % Calculate metrics for steady-state periods and after steps
-    tau_ss = 0.43*3;  % approximate settling time
-    n_settle = ceil(tau_ss/Ts);
-    ss_periods = steady_state_periods(Pd, n_settle);
-    Y_RMSE_tr = sqrt(mean(Y_errors(~ss_periods,:).^2, 1));
-    Y_RMSE_ss = sqrt(mean(Y_errors(ss_periods,:).^2, 1));
-
-    % Record number of samples in RMSE calculations
-    nT_Y_RMSE = size(Y_errors, 1);
-    nT_Y_RMSE_tr = sum(~ss_periods);
-    nT_Y_RMSE_ss = sum(ss_periods);
-    assert(nT_Y_RMSE_tr + nT_Y_RMSE_ss == nT_Y_RMSE)
-
-    % Calculate variance of estimates during steady-state periods
-    trans_idxs = transition_periods(Pd);
-    n_resp = numel(trans_idxs);
-    sq_devs = nan(size(Y_est));
-    for i = 1:n_resp
-        idx = trans_idxs{i};
-        idx1 = idx(1) + n_settle - 1;
-        avgs = mean(Y_est(idx1:idx(2), :));
-        sq_devs(idx1:idx(2), :) = (Y_est(idx1:idx(2), :) - avgs).^2;
+    % Make metrics labels for all observers, e.g. for observer 'KF1':
+    %  - 'MSE_y_est_KF1' : overall MSE
+    %  - 'MSE_tr_y_est_KF1' : MSE in transition periods
+    %  - 'MSE_ss_y_est_KF1' :  MSE in steady-state periods
+    %  - 'Var_ss_y_est_KF1' : Variance in steady-state periods
+    n_metrics = numel(metrics_labels);
+    obs_metrics_labels = cell(n_metrics, n_obs * ny);
+    for i = 1:n_metrics
+        metric_label = metrics_labels{i};
+        labels = matrix_element_labels(metric_label, y_est_labels, obs_labels, '');
+        obs_metrics_labels(i, :) = labels(:)';
     end
-    sq_devs = sq_devs(~isnan(sq_devs(:, 1)), :);
-    Y_var_ss = mean(sq_devs);
 
-    % Calculate mean-squared differences
-    Y_diffs = [nan(1, size(Y_est, 2)); diff(Y_est, 1)];
-    Y_RMSD_ss = sqrt(mean(Y_diffs(ss_periods,:).^2, 1, 'omitnan'));
+    %% Display RMSE results
 
-    % Display summary table
-    rmse_table = array2table([Y_RMSE' Y_RMSE_tr' Y_RMSE_ss' Y_var_ss' Y_RMSD_ss'], ...
-        'RowNames', string(obs_labels), ...
-        'VariableNames', metrics_labels ...
-    );
     % Transpose the table (complicated in MATLAB):
-    rmse_table_tr = rows2vars(rmse_table);
+    rmse_table_tr = rows2vars(metrics);
     rmse_table_tr = removevars(rmse_table_tr, 'OriginalVariableNames');
     rmse_table_tr.Properties.RowNames = {'RMSE', ...
         'RMSE in transitions', 'RMSE in steady-state', ...
@@ -287,9 +265,10 @@ for i_comb = 1:n_combs
         obs = observers{observers_mkf(f)};
         MKF_Y_RMSE{f} = size(sim_out.MKF_Y_est{f}, 1);
         % Compute errors in multiple filter state estimates
-        % Note: First estimates are at k=1
-        MKF_Y_errors{f} = repmat(Y, 1, obs.nh) - sim_out.MKF_Y_est{f};
-        MKF_Y_RMSE{f} = mean(MKF_Y_errors{f}(2:end, :).^2, 1);
+        % Find out how many hypotheses were saved
+        nh = size(sim_out.MKF_p_seq_g_Yk{f}, 2);
+        MKF_Y_errors{f} = repmat(Y, 1, nh) - sim_out.MKF_Y_est{f};
+        MKF_Y_RMSE{f} = mean(MKF_Y_errors{f}.^2, 1);
     end
 
 
@@ -316,8 +295,9 @@ for i_comb = 1:n_combs
     sim_params = table(p_case, i_in_seq, t_stop, Ts, nT, nu, ny, n_obs);
 
     % Observer metrics
-    obs_metrics = [table(tau_ss, nT_Y_RMSE, nT_Y_RMSE_tr, nT_Y_RMSE_ss) ...
-        array2table(reshape(rmse_table.Variables', [], ...
+    obs_metrics = [ ...
+        objects2tablerow(containers.Map({'metrics'}, {metrics_params})) ...
+        array2table(reshape(metrics.Variables', [], ...
             n_obs*n_metrics), 'VariableNames', obs_metrics_labels);
     ];
 

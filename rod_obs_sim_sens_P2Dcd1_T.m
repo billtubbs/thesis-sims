@@ -37,7 +37,7 @@ addpath('~/ml-plot-utils')
 
 % Sub-directories used
 data_dir = 'data';
-results_dir = 'results/sens';
+results_dir = 'results/sens_P2Dcd1_T';
 if ~isfolder(results_dir)
     mkdir(results_dir);
 end
@@ -94,24 +94,24 @@ for i_iter = 1:n_combs
 
         case 1
 
-            % Kp : default -32.4
-            % Tp1 : default 0.106
-            % Tp2 : default 0.106
-            % thetap : default 0.2
-            Kp = -32.4 * var_ratios(comb(1));  % adjusted
-            Tp1 = 0.106 * var_ratios(comb(2));  % adjusted
-            Tp2 = Tp1;  % same as Tp1 (adjusted)
-            thetap = 0.2;  % fixed
+            % Kp : default -35.935
+            % Tp1 : default 0.23503
+            % Tp2 : default 0.16076
+            % thetap : default 0.05
+            Kp = -35.935 * var_ratios(comb(1));  % adjusted
+            Tp1 = 0.23503 * var_ratios(comb(2));  % adjusted
+            Tp2 = 0.16076 * var_ratios(comb(2));  % adjusted
+            thetap = 0.05;  % fixed
             epsilon = 0.01;  % default
             sigma_wp_1 = 0.2717 / 100;  % default
             b = 100;  % default
 
         case 2
 
-            Kp = -32.4;  % default
-            Tp1 = 0.106;  % default
-            Tp2 = 0.106;  % default
-            thetap = 0.2;  % default
+            Kp = -35.935;  % default
+            Tp1 = 0.23503;  % default
+            Tp2 = 0.16076;  % default
+            thetap = 0.05;  % default
             % epsilon : default 0.01
             % step_mag : default 0.2717
             % b : default 100
@@ -126,8 +126,8 @@ for i_iter = 1:n_combs
     % Load observers
     % These are adjusted according to parameters specified above
 
-    rod_obs_P2DcTd4_adj  % model identified from data
-    %rod_obs_P2Dcd1_T_adj  % ident. from true outputs
+    %rod_obs_P2DcTd4_adj  % model identified from data
+    rod_obs_P2Dcd1_T_adj  % ident. from true outputs
 
     % Choose which observers to simulate
     % - KF1 : Kalman filter tuned to minimize steady-state errors

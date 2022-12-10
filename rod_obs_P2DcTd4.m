@@ -158,19 +158,19 @@ obs_model1.R = R;
 KF1 = KalmanFilterF(obs_model1,P0,'KF1');
 
 % Kalman filter 2 - tuned to sigma_wp(2)
-obs_model3 = obs_model;
-obs_model3.Q = diag([q00*ones(1, n-1) sigma_wp{1}(2)^2]);
-obs_model3.R = R;
-KF2 = KalmanFilterF(obs_model3,P0,'KF2');
+obs_model2 = obs_model;
+obs_model2.Q = diag([q00*ones(1, n-1) sigma_wp{1}(2)^2]);
+obs_model2.R = R;
+KF2 = KalmanFilterF(obs_model2,P0,'KF2');
 
 % Kalman filter 3 - manually tuned
-obs_model2 = obs_model;
-obs_model2.Q = diag([q00*ones(1, n-1) 0.027^2]);
-obs_model2.R = R;
-KF3 = KalmanFilterF(obs_model2,P0,'KF3');
+obs_model3 = obs_model;
+obs_model3.Q = diag([q00*ones(1, n-1) 0.027^2]);
+obs_model3.R = R;
+KF3 = KalmanFilterF(obs_model3,P0,'KF3');
 
 % Switching models
-obs_models = {obs_model1, obs_model3};
+obs_models = {obs_model1, obs_model2};
 
 % Scheduled Kalman filter
 % Use this to test performence of multi-model filters
@@ -197,6 +197,6 @@ Q0 = diag([q00*ones(1, n-1) 0]);
 nh = 20;  % number of filters
 n_min = 18;  % minimum life of cloned filters
 MKF_SP1 = MKFObserverSP_RODD(model,io,P0,epsilon,sigma_wp, ...
-    Q0,R,nh,n_min,'MKF_SP');
+    Q0,R,nh,n_min,'MKF_SP1');
 
 observers = {KF1, KF2, KF3, SKF, MKF_SF95, MKF_SF1, MKF_SP1};
