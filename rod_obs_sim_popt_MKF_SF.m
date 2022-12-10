@@ -37,8 +37,8 @@ p_case = 1;  % Not currently used
 i_in_seq = 6;
 
 % Labels to identify results file
-%obs_label = "MKF_SF95";
-obs_label = "MKF_SF1";
+obs_label = "MKF_SF95";
+%obs_label = "MKF_SF1";
 sim_label = "popt_" + obs_label;
 
 % Load observers
@@ -79,7 +79,7 @@ for i_comb = 1:n_combs
 
     % Long fusion horizon
     f = nf * d;  % fusion horizon
-    if f > 50
+    if f > 100
         selection(i_comb) = false;
     end
     %fprintf("(%d, %d, %d)\n", f, m, d)
@@ -328,9 +328,11 @@ for i_comb = 1:n_combs
 end
 
 
-%% For results plots, run this file
+% To plot results of popt run this script
 
-%rod_obs_sim_plots
+%rod_obs_sim_popt_MKF_SF_plots
+
+fprintf("run rod_obs_sim_popt_MKF_SF_plots.m to produce plots.\n")
 
 
 

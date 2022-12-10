@@ -24,7 +24,7 @@ if ~isfolder(plot_dir)
 end
 
 % Choose results
-obs_label = "MKF_SF1";
+obs_label = "MKF_SF95";
 sim_label = "popt_" + obs_label;
 p_case = 1;
 
@@ -52,7 +52,7 @@ d_unique
 
 %% Sort combinations from lowest to highest RMSEs
 
-mse_label = sprintf("MSE_y_est_%s", obs_label);
+mse_label = sprintf("RMSE_y_est_%s", obs_label);
 
 param_labels = compose(strcat(obs_label, "_%s"), ...
     ["nf", "f", "m", "d" "beta", "nm", "nh_max"]);

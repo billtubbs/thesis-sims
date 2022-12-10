@@ -289,5 +289,6 @@ end
 
 %rod_obs_sim_popt_MKF_SP_plots
 
+fprintf("run rod_obs_sim_popt_MKF_SP_plots.m to produce plots.\n")
 
 

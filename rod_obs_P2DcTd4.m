@@ -178,15 +178,15 @@ SKF = SKFObserver(obs_models,P0,'SKF');
 
 % Multiple model observer - sequence fusion
 Q0 = diag([q00*ones(1, n-1) 0]);
-f = 20;  % fusion horizon
+f = 60;  % fusion horizon
 m = 2;  % maximum number of shocks
-d = 5;  % spacing parameter
+d = 10;  % spacing parameter
 MKF_SF95 = MKFObserverSF_RODD95(model,io,P0,epsilon,sigma_wp, ...
     Q0,R,f,m,d,'MKF_SF95');
 
 % Multiple model observer - sequence fusion
 Q0 = diag([q00*ones(1, n-1) 0]);
-nf = 4;  % detection intervals in fusion horizon
+nf = 5;  % detection intervals in fusion horizon
 m = 2;  % maximum number of shocks
 d = 12;  % spacing parameter
 MKF_SF1 = MKFObserverSF_RODD(model,io,P0,epsilon,sigma_wp, ...
@@ -194,8 +194,8 @@ MKF_SF1 = MKFObserverSF_RODD(model,io,P0,epsilon,sigma_wp, ...
 
 % Multiple model observer - sequence pruning
 Q0 = diag([q00*ones(1, n-1) 0]);
-nh = 20;  % number of filters
-n_min = 18;  % minimum life of cloned filters
+nh = 25;  % number of filters
+n_min = 23;  % minimum life of cloned filters
 MKF_SP1 = MKFObserverSP_RODD(model,io,P0,epsilon,sigma_wp, ...
     Q0,R,nh,n_min,'MKF_SP1');
 

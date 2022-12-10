@@ -28,7 +28,7 @@ p_case = 1;  % Not currently used
 i_in_seqs = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
 % Choose observers to include in calculations
-obs_labels = {'KF1', 'KF2', 'KF3', 'MKF_SF95', 'MKF_SF1', 'MKF_SP', 'SKF'};
+obs_labels = {'KF1', 'KF2', 'KF3', 'MKF_SF95', 'MKF_SF1', 'MKF_SP1', 'SKF'};
 n_obs = numel(obs_labels);
 
 % Load simulation results from csv file
@@ -116,7 +116,7 @@ disp(rmse_table)
 %% Produce Latex code
 
 % Choose observers to include in Latex RMSE table
-obs_latex = {'KF3', 'MKF_SF95', 'MKF_SF1', 'MKF_SP', 'SKF'};
+obs_latex = {'KF3', 'MKF_SF95', 'MKF_SF1', 'MKF_SP1', 'SKF'};
 
 table_data = rmse_table(:, obs_latex);
 
