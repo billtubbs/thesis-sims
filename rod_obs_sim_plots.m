@@ -85,6 +85,7 @@ i_in_seq = 3;
 
 % Choose which observers to include in plot
 obs_labels = {'KF3', 'MKF_SF1'};
+%obs_labels = {'MKF_SF95', 'MKF_SF1', 'MKF_SP1'};
 n_obs = numel(obs_labels);
 
 % Load simulation data
@@ -143,9 +144,9 @@ for i = 1:n_obs
 end
 
 Pd = sim_data.Pd;
-%Wp = sim_data.Wp;
+Wp = sim_data.Wp;
 Y = sim_data.Y;
-%Y_m = sim_data.Y_m;
+Y_m = sim_data.Y_m;
 
 figure(2); clf
 axs = repmat(axes, 1, ny+nw);
@@ -157,16 +158,16 @@ for i = 1:ny
         plot(t, Y_est{j}(:, ny),'Linewidth', 2); hold on;
         labels{j} = sprintf("$%s$ by %s", y_est_plot_labels{i}, obs_labels{j});
     end
-    %stairs(t, Y_m(:, i), 'k.')
-    stairs(t, Y(:, i), 'k-')
+    plot(t, Y_m(:, i), 'k.')
+    plot(t, Y(:, i), 'k-')
     xlim(t([1 end]))
     %ylim(axes_limits_with_margin([Y Y_est], 0.1))
-    ylim([-15 4])
+    ylim([-23 13])
     set(gca, 'TickLabelInterpreter', 'latex')
     %xlabel(t_label, 'Interpreter', 'Latex')
-    y_label = string2latex(strjoin([y_labels(i) y_est_plot_labels(i)], ', '));
+    y_label = string2latex(strjoin([y_m_labels(i) y_labels(i) y_est_plot_labels(i)], ', '));
     ylabel(y_label, 'Interpreter','Latex')
-    legend([escape_latex_chars(obs_labels) string2latex(y_labels(i))], ...
+    legend([escape_latex_chars(obs_labels) string2latex([y_m_labels(i) y_labels(i) ])], ...
         'Interpreter', 'Latex', 'Position', [0.39, 0.78, .13, .12])
     %legend([labels string2latex(y_labels(i))], ...
     %    'Interpreter','Latex', 'Location', 'best')
@@ -187,7 +188,7 @@ for i = 1:nw
     stairs(t, Pd(:, i), 'k-');
     xlim(t([1 end]))
     %ylim(axes_limits_with_margin([Pd X_est(:, idx(i)+ + n*(n_obs-1))], 0.1))
-    ylim([-0.2 0.5])
+    ylim([-0.25 0.6])
     set(gca, 'TickLabelInterpreter', 'latex')
     xlabel(t_label, 'Interpreter', 'Latex')
     y_label = string2latex(strjoin([p_labels(i) x_est_plot_labels(idx(i))], ', '));

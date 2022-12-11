@@ -9,7 +9,7 @@ u_labels = vector_element_labels('u', '(k)', nu, false);
 x_labels = vector_element_labels('x', '(k)', n, false);
 p_labels = vector_element_labels('p', '(k)', nw, false);
 y_labels = vector_element_labels('y', '(k)', ny, false);
-y_m_labels = vector_element_labels('y_m', '(k)', ny, false);
+y_m_labels = vector_element_labels('y_M', '(k)', ny, false);
 y_model_labels = vector_element_labels('y_{model}', '(k)', ny, false);
 
 % Combine all input signal labels

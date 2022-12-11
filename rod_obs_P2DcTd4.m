@@ -165,7 +165,7 @@ KF2 = KalmanFilterF(obs_model2,P0,'KF2');
 
 % Kalman filter 3 - manually tuned
 obs_model3 = obs_model;
-obs_model3.Q = diag([q00*ones(1, n-1) 0.027^2]);
+obs_model3.Q = diag([q00*ones(1, n-1) 0.0234^2]);
 obs_model3.R = R;
 KF3 = KalmanFilterF(obs_model3,P0,'KF3');
 
