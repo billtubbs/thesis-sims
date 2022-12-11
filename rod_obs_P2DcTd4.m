@@ -1,7 +1,8 @@
 %% Observers for multi-model observer simulations
 %
 
-%addpath('process-observers')
+
+addpath('~/process-observers')
 
 
 %% Process and disturbance models
