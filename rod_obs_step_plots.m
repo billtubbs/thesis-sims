@@ -14,9 +14,9 @@ clear all
 rng(0)
 
 % Dependencies:
-addpath('process-observers')
-addpath('data-utils')
-addpath('plot-utils')
+addpath('~/process-observers')
+addpath('~/ml-data-utils')
+addpath('~/ml-plot-utils')
 
 % Sub-directories used
 data_dir = 'data';
@@ -66,7 +66,7 @@ for i = 1:summary_data.n_obs
 end
 
 % Select observers to include
-obs_labels = {'KF3', 'MKF_SP1'};
+obs_labels = {'KF3', 'MKF_SF1'};
 n_obs = numel(obs_labels);
 
 obs_data_exists = ismember(obs_labels, obs_sim_labels);
