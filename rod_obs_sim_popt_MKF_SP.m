@@ -37,7 +37,7 @@ p_case = 1;  % Not currently used
 i_in_seq = 6;
 
 % Labels to identify results file
-obs_label = "KF3";
+obs_label = "MKF_SP1";
 sim_label = "popt_" + obs_label;
 
 % Load observers

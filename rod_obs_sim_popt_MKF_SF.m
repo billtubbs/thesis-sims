@@ -34,7 +34,7 @@ p_case = 1;  % Not currently used
 % - 3 for initial observer test (Fig. 5 in paper)
 % - 6 for observer parameter optimization
 % - 6 to 15 for observer Monte Carlo simulations.
-i_in_seq = 6;
+i_in_seq = 7;
 
 % Labels to identify results file
 obs_label = "MKF_SF95";
