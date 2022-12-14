@@ -10,6 +10,7 @@ clear all
 
 % Dependencies:
 addpath('~/process-observers')
+addpath('~/ml-data-utils')
 addpath('~/ml-plot-utils')
 
 % Sub-directories used

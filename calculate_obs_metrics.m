@@ -1,5 +1,8 @@
-function [metrics, params, errors, labels] = calculate_obs_metrics(Y, Y_est, ...
-        obs_labels, Pd, Ts)
+function [metrics, params, errors, labels] = calculate_obs_metrics(Y, ...
+        Y_est, obs_labels, Pd, Ts, tau_ss)
+% Used by rod_obs_sim.m to compute observer metrics from
+% simulation results.
+%
 
     % Labels to be used
     labels = {'RMSE', 'RMSE_tr', 'RMSE_ss', 'Var_ss', 'RMSD_ss'};
@@ -21,7 +24,7 @@ function [metrics, params, errors, labels] = calculate_obs_metrics(Y, Y_est, ...
     Y_RMSE = sqrt(mean(errors.Y.^2, 1));
 
     % Calculate metrics for steady-state periods and after steps
-    params.tau_ss = 0.43*3;  % approximate settling time
+    params.tau_ss = tau_ss;  % settling time
     params.n_settle = ceil(params.tau_ss/Ts);
     errors.ss_periods = steady_state_periods(Pd, params.n_settle);
     Y_RMSE_tr = sqrt( ...
