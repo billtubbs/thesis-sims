@@ -1,5 +1,9 @@
 %% Unit tests for sample_random_shocks.m
+
 clear all
+
+% TODO: Replace this with a local copy when done
+addpath("~/process-observers/")
 
 
 %% single sequence - 1 distribution

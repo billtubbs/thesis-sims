@@ -1,4 +1,4 @@
-% Simulate a Kalman Filter (KF3) on simulated measurement 
+% Simulate the MKF_SP_RODD observer on simulated measurement 
 % data from grinding simulation model with a range of different
 % parameter settings for optimization.
 %
