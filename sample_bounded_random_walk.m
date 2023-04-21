@@ -1,5 +1,5 @@
 function p = sample_bounded_random_walk(sd_e, beta, alpha1, alpha2, N, ...
-    tau, phi)
+    tau, phi, xkm1)
 % p = sample_bounded_random_walk(sd_e, beta, alpha1, alpha2, N, ...
 %     tau, phi)
 % Simulate the Bounded Random Walk stochastic process proposed by
@@ -10,18 +10,18 @@ function p = sample_bounded_random_walk(sd_e, beta, alpha1, alpha2, N, ...
 %    Walks - The Bounded Random Walk Process in Discrete and 
 %    Continuous Time, Econometric Theory, 18, 2002, 99-118.
 %
-
-    % Regularization parameter (set to 0.5 by default)
+    if nargin < 8
+        % Set initial state
+        xkm1 = tau;
+    end
     if nargin < 7
+        % Regularization parameter (0.5 by default)
         phi = 0.5;
     end
 
     % Noise
     e = randn(N, 1);
     p = zeros(N, 1);
-
-    % Set initial state
-    xkm1 = tau;
 
     % Simulate
     for i = 1:N

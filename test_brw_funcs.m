@@ -35,3 +35,22 @@ assert(isequal(round(p(1:10), 4), [ ...
     100.2151  100.9486  100.0451  100.3899  100.5175 ...
     99.9944   99.8209   99.9580  101.3893  102.4971
 ]'))
+
+
+% Run again with phi argument and non-zero initial state
+beta = -15;
+alpha1 = 3;
+alpha2 = 3;
+tau = 100;
+sd_e = 0.4;
+N = 2000;
+phi = 0.5;
+xkm1 = 95;
+
+p = sample_bounded_random_walk(sd_e, beta, alpha1, alpha2, N, tau, phi, xkm1);
+assert(all(p < 106) & all(p > 94))
+
+assert(isequal(round(p(1:10), 4), [ ...
+    96.1185   96.6337   97.0772   96.9357   96.8867   ...
+    97.1837   97.2332   97.6890   97.4146   97.6040
+]'))
