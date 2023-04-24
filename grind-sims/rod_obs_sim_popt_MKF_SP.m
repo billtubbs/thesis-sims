@@ -1,4 +1,4 @@
-% Simulate the MKF_SF_RODD95 observer on simulated measurement 
+% Simulate the MKF_SP_RODD observer on simulated measurement 
 % data from grinding simulation model with a range of different
 % parameter settings for optimization.
 %
@@ -10,8 +10,8 @@ clear all
 
 % Specify path to observer functions
 addpath('~/process-observers')
-addpath('~/ml-data-utils')
-addpath('~/ml-plot-utils')
+addpath('../ml-data-utils')
+addpath('../ml-plot-utils')
 
 % Sub-directories used
 data_dir = 'data';
@@ -32,13 +32,12 @@ p_case = 1;  % Not currently used
 % - 1 for process model estimation (Fig. 4 in paper)
 % - 2 for process model validation (model selection)
 % - 3 for initial observer test (Fig. 5 in paper)
-% - 6 for observer parameter optimization
+% - 5 for observer parameter optimization - no use 6!
 % - 6 to 15 for observer Monte Carlo simulations.
-i_in_seq = 7;
+i_in_seq = 6;
 
 % Labels to identify results file
-obs_label = "MKF_SF95";
-%obs_label = "MKF_SF1";
+obs_label = "MKF_SP1";
 sim_label = "popt_" + obs_label;
 
 % Load observers
@@ -54,83 +53,41 @@ rod_obs_P2DcTd4  % observers used in IFAC paper
 %  - sim_experiment_ore_switching.m
 
 % Define parameter ranges
-% TODO: Add 7 because it could be good
-nf_values = {1, 2, 3, 4, 5, 6, 8, 10};
-m_values = {1, 2, 3};
-d_values = {3, 4, 5, 6, 8, 10, 12, 15};
+nh_values = {10, 15, 20, 25, 30, 40, 50};
 
-% Determine all possible combinations
-[ndi_idx, m_idx, d_idx] = ndgrid(nf_values, m_values, d_values);
+% In this case vary the difference between nh_values and n_min
+n_min_diff_values = {1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18, 22, 26, 30};
 
-% Eliminate some combinations
-fprintf("Selecting parameter value combinations...\n")
-n_combs = numel(ndi_idx);
-selection = true(numel(ndi_idx), 1);
-for i_comb = 1:n_combs
-    % Parameter values
-    nf = ndi_idx{i_comb};  % number of detection intervals
-    m = m_idx{i_comb};  % maximum no. of shocks in fusion horizon
-    d = d_idx{i_comb};  % length of detection interval
+[nh_idx, n_min_diff_idx] = ndgrid(nh_values, n_min_diff_values);
+n_combs = numel(nh_idx);
 
-    % Some combinations are invalid
-    if m > nf
-        selection(i_comb) = false;
-    end
 
-    % Long fusion horizon
-    f = nf * d;  % fusion horizon
-    if f > 100
-        selection(i_comb) = false;
-    end
-    %fprintf("(%d, %d, %d)\n", f, m, d)
-end
-
-% Remove unwanted combinations
-ndi_idx = ndi_idx(selection);
-m_idx = m_idx(selection);
-d_idx = d_idx(selection);
-fprintf("%d of %d possible combinations will be tested\n", ...
-    numel(ndi_idx), n_combs)
-n_combs = numel(ndi_idx);
-
-% Start simulations
 for i_comb = 1:n_combs
 
     % Create observer with parameter values
-    nf = ndi_idx{i_comb};  % number of detection intervals
-    m = m_idx{i_comb};  % maximum no. of shocks in fusion horizon
-    d = d_idx{i_comb};  % length of detection interval
-    f = nf * d;  % fusion horizon
+    nh = nh_idx{i_comb};  % number of filters
+    n_min_diff = n_min_diff_idx{i_comb};  % minimum life of cloned filters
+    n_min = nh - n_min_diff;
+
+    % Reject combination if it does not meet criteria
+    if n_min <= 0
+        continue
+    end
 
     % Choose the observer to simulate
     i_obs = find(cellfun(@(obs) strcmp(obs.label, obs_label), observers));
     assert(numel(i_obs) == 1)
     obs = observers{i_obs};
-    assert(ismember(obs.type, ["MKF_SF_RODD95" "MKF_SF_RODD"]))
+    assert(strcmp(obs.type, 'MKF_SP_RODD'))
 
-    % Re-initialize observer - sequence fusion
-    switch obs.type
-        case "MKF_SF_RODD95"
-            obs = MKFObserverSF_RODD95(model,io,obs.P0,obs.epsilon, ...
-                obs.sigma_wp,obs.Q0,obs.R,f,m,d,obs.label);
-        case "MKF_SF_RODD"
-            obs = MKFObserverSF_RODD(model,io,obs.P0,obs.epsilon, ...
-                obs.sigma_wp,obs.Q0,obs.R,nf,m,d,obs.label);
-    end
-
-    % Reject combination if it does not meet criteria
-    nh_max = 200;
-    beta_min = 0.85;
-    if (obs.nh_max > nh_max) || (obs.beta < beta_min)
-        fprintf("Rejecting due to nh_max > %d (%d)\n", nh_max, obs.nh_max)
-        continue
-    end
-
+    % Re-initialize observer - sequence pruning
+    obs = MKFObserverSP_RODD(model,io,obs.P0,obs.epsilon,obs.sigma_wp, ...
+        obs.Q0,obs.R,nh,n_min,obs.label);
     observers = {obs};
 
     fprintf("\nObserver simulation %d of %d with \n", i_comb, n_combs)
-    fprintf("f: %d, m: %d, d: %d, nh: %d, Input seq.: #%d\n", f, m, d, ...
-        obs.nh_max, i_in_seq)
+    fprintf("nh: %d, n_min: %d, Input seq.: #%d\n", nh, n_min, ...
+        i_in_seq)
 
     % Load system simulation results
     if i_in_seq < 6
@@ -191,8 +148,8 @@ for i_comb = 1:n_combs
     n_obs = numel(observers);
     n_obs_mkf = 0;
     observers_mkf = double.empty(1, 0);
-    for i=1:n_obs
-        if startsWith(observers{i}.label, "MMKF")
+    for i = 1:n_obs
+        if startsWith(observers{i}.type, "MKF")
             n_obs_mkf = n_obs_mkf + 1;
             observers_mkf(n_obs_mkf) = i;
         end
@@ -330,9 +287,8 @@ end
 
 % To plot results of popt run this script
 
-%rod_obs_sim_popt_MKF_SF_plots
+%rod_obs_sim_popt_MKF_SP_plots
 
-fprintf("run rod_obs_sim_popt_MKF_SF_plots.m to produce plots.\n")
-
+fprintf("run rod_obs_sim_popt_MKF_SP_plots.m to produce plots.\n")
 
 

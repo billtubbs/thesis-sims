@@ -18,7 +18,8 @@
 clear all
 
 % Specify path to utility functions
-addpath('plot-utils/')
+addpath('../plot-utils')
+addpath('../data-utils')
 
 % Specify which simulation case
 p_case = 1;  % Not currently used

@@ -15,8 +15,8 @@ rng(0)
 
 % Dependencies:
 addpath('~/process-observers')
-addpath('~/ml-data-utils')
-addpath('~/ml-plot-utils')
+addpath('../data-utils')
+addpath('../plot-utils')
 
 % Sub-directories used
 data_dir = 'data';

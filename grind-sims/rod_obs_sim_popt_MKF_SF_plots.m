@@ -13,8 +13,10 @@
 %    See data folder
 %
 
-
 clear all
+
+% Dependencies:
+addpath('../plot-utils')
 
 % Sub-directories used
 results_dir = 'results';

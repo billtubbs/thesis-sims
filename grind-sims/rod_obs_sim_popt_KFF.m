@@ -1,4 +1,4 @@
-% Simulate the MKF_SP_RODD observer on simulated measurement 
+% Simulate a Kalman Filter (KF3) on simulated measurement 
 % data from grinding simulation model with a range of different
 % parameter settings for optimization.
 %
@@ -10,8 +10,8 @@ clear all
 
 % Specify path to observer functions
 addpath('~/process-observers')
-addpath('~/ml-data-utils')
-addpath('~/ml-plot-utils')
+addpath('../data-utils')
+addpath('../plot-utils')
 
 % Sub-directories used
 data_dir = 'data';
@@ -37,7 +37,7 @@ p_case = 1;  % Not currently used
 i_in_seq = 6;
 
 % Labels to identify results file
-obs_label = "MKF_SP1";
+obs_label = "KF3";
 sim_label = "popt_" + obs_label;
 
 % Load observers
@@ -52,42 +52,36 @@ rod_obs_P2DcTd4  % observers used in IFAC paper
 % runs the Simulink model:
 %  - sim_experiment_ore_switching.m
 
-% Define parameter ranges
-nh_values = {10, 15, 20, 25, 30, 40, 50};
+% Use these adjustment factors to vary the parameter of interest
+adj_values = [ ...
+    0.0100    0.0316    0.1000    0.1778    0.3162    0.5623    0.7499 ...
+    1.0000    1.3335    1.7783    3.1623   10.0000   31.6228  100.0000
+];
 
-% In this case vary the difference between nh_values and n_min
-n_min_diff_values = {1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 18, 22, 26, 30};
-
-[nh_idx, n_min_diff_idx] = ndgrid(nh_values, n_min_diff_values);
-n_combs = numel(nh_idx);
-
+n_combs = numel(adj_values);
 
 for i_comb = 1:n_combs
 
     % Create observer with parameter values
-    nh = nh_idx{i_comb};  % number of filters
-    n_min_diff = n_min_diff_idx{i_comb};  % minimum life of cloned filters
-    n_min = nh - n_min_diff;
-
-    % Reject combination if it does not meet criteria
-    if n_min <= 0
-        continue
-    end
+    adj = adj_values(i_comb);  % number of filters
 
     % Choose the observer to simulate
     i_obs = find(cellfun(@(obs) strcmp(obs.label, obs_label), observers));
     assert(numel(i_obs) == 1)
     obs = observers{i_obs};
-    assert(strcmp(obs.type, 'MKF_SP_RODD'))
+    assert(strcmp(obs.type, "KFF"))
 
-    % Re-initialize observer - sequence pruning
-    obs = MKFObserverSP_RODD(model,io,obs.P0,obs.epsilon,obs.sigma_wp, ...
-        obs.Q0,obs.R,nh,n_min,obs.label);
+    % Re-initialize observer - Kalman filter
+    % Kalman filter 3 - manually tuned
+    obs_model3 = obs_model;
+    obs_model3.Q = diag([q00*ones(1, n-1) 0.027^2]);
+    obs_model3.Q(n, n) = adj * obs_model3.Q(n, n);
+    obs_model3.R = R;
+    obs = KalmanFilterF(obs_model3,P0,'KF3');
     observers = {obs};
 
     fprintf("\nObserver simulation %d of %d with \n", i_comb, n_combs)
-    fprintf("nh: %d, n_min: %d, Input seq.: #%d\n", nh, n_min, ...
-        i_in_seq)
+    fprintf("adj: %g, Input seq.: #%d\n", adj, i_in_seq)
 
     % Load system simulation results
     if i_in_seq < 6
@@ -144,7 +138,7 @@ for i_comb = 1:n_combs
     %writetable(sim_out.data, fullfile(results_dir, filename));
     %fprintf("Observer simulation results saved to file: %s\n", filename)
 
-    % Count number of observers and MKF/AFMM observers
+    % Count number of observers and MKF observers
     n_obs = numel(observers);
     n_obs_mkf = 0;
     observers_mkf = double.empty(1, 0);
@@ -287,8 +281,8 @@ end
 
 % To plot results of popt run this script
 
-%rod_obs_sim_popt_MKF_SP_plots
+%rod_obs_sim_popt_KFF_plots
 
-fprintf("run rod_obs_sim_popt_MKF_SP_plots.m to produce plots.\n")
+fprintf("run rod_obs_sim_popt_KFF_plots.m to produce plots.\n")
 
 

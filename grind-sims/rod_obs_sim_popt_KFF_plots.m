@@ -15,7 +15,8 @@
 
 clear all
 
-addpath("~/ml-plot-utils/")
+% Dependencies:
+addpath('../plot-utils')
 
 % Sub-directories used
 results_dir = 'results';
