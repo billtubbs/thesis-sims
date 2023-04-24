@@ -1,18 +1,35 @@
 # thesis-sims
 
-This is work-in-progress...
+MATLAB code and data to reproduce the simulation results in my masters thesis report:
 
-MATLAB code and data to reproduce simulation results included in my Masters thesis report, December 2022.
+ - Tubbs, W. J., Multiple-Model Observers for Detecting Ore Feed Disturbances in Grinding Operations, Mémoire, May, 2023.
 
- - Tubbs, W. J., A Disturbance Model and Observer for Grinding Process Applications, Mémoire.
-
-Similar results were previously published in the following conference paper presented at the 19th Symposium on Control, Optimization and Automation in Mining, Mineral and Metal Processing ([IFAC MMM](https://ifacmmm2022.org)) in Montreal.
+For the code to reproduce the results of the following conference paper, presented at the 19th Symposium on Control, Optimization and Automation in Mining, Mineral and Metal Processing ([IFAC MMM](https://ifacmmm2022.org)) in Montreal:
 
 - Tubbs, W. J., Desbiens, A., and Bouchard, J. (2022). An Observer to Detect Infrequently-Occurring Disturbances in Grinding Operations.
 
-![Figure showing average observer responses to step disturbances](plots/rod_obs_sim_resp_plot1.png)
+Refer to this repository instead:
+- [https://github.com/billtubbs/ifac-2022-mmkf](https://github.com/billtubbs/ifac-2022-mmkf)
 
-## Input data
+![Figure showing average observer responses to step disturbances](grind-sims/plots/rod_obs_sim_resp_plot1.png)
+
+The code has been tested with MATLAB versions 2019b, 2020b, and 2021b.  It may or may not work with other versions!
+
+## 1. Generating RODD disturbances (section 3.1 of thesis report)
+
+The files for these simulations are in the [`linear-sims`](linear-sims) sub-directory.  Navigate to this directory and then follow the instructions below.
+
+
+## 2. Observer simulations with linear systems (section 3.2 of thesis report)
+
+The files for these simulations are in the [`linear-sims`](linear-sims) sub-directory.  Navigate to this directory and then follow the instructions below.
+
+
+## 3. Observer simulations with grinding process simulator (section 3.3 of thesis report)
+
+The files for these simulations are in the [`grind-sims`](grind-sims) sub-directory.  Navigate to this directory and then follow the instructions below.
+
+### Input data
 
 The [data](data) subdirectory contains time-series data sets from 15 simulations of a grinding process model (the model itself is not available here).  Data sets 1 to 5 contain short simulations of 300 time steps.  Simulations 6 to 15 contain longer simulations of 2460 time steps.  The files contain data for 7 process variables although only two were used in this work (BASE_ORE_MIX and SAG_OF_P80_M).
 
@@ -26,9 +43,7 @@ The [data](data) subdirectory contains time-series data sets from 15 simulations
 | 6 ... 15  | sim_OL_rc_est_mix_factor_2460_6_ident.csv ... sim_OL_rc_est_mix_factor_2460_15_ident.csv  | Observer evaluation (RMSE results in Table 2 and Fig. 6 in paper)    |
 
 
-## Instructions to reproduce the results
-
-The code has been tested with MATLAB versions 2019b, 2020b, and 2021b.  It may or may not work with other versions!
+### Instructions to reproduce the results
 
 Open the script [rod_obs_sim.m](rod_obs_sim.m) and specify the input data sequences to include in the simulations in lines 55-57.  For example, specify the first 5 as follows:
 
@@ -140,7 +155,7 @@ Run rod_obs_sim_plots.m to produce plots.
 Run rod_obs_calc_metrics.m to calculate evaluation metrics.
 ```
 
-## Simulation results
+### Simulation results
 
 After running [rod_obs_sim.m](rod_obs_sim.m), the results of the simulations are saved as CSV files to the [results](results) subdirectory. For example:
 
@@ -163,7 +178,8 @@ Explanation of output results files:
 - The file 'rod_obs_sim_1_resps.csv' contains the data used to create the plot of observer responses to shocks (Fig. 6 in the paper)
 - The file 'rod_obs_sim_1_summary.csv' will contain a records of all the simulation parameters, model parameters, observer parameters, and overall RMSE metrics for each simualtion. This file is not over-written by 'rod_obs_sim.m'. Every time a new simulation is run, a new row is added to 'rod_obs_sim_1_summary.csv'. ***Before re-running simulations, remove the previous results from this file or erase it completely, otherwise, some results may be duplicated.***
 
-## Plots
+
+### Plots
 
 To produce the plots shown in the report, run simulations for all the datasets (1 to 15) and then run the scripts [rod_obs_sim_plots.m](rod_obs_sim_plots.m) and [rod_obs_step_plots.m](rod_obs_step_plots.m).
 
@@ -175,7 +191,7 @@ After running these scripts, images of the plot figures will be saved in the [pl
 - rod_obs_sim_resp_plot2.pdf
 
 
-## Evaluation metrics
+### Evaluation metrics
 
 To calculate the evaluation metrics in Table 2 in the paper, run the script [rod_obs_calc_metrics.m](rod_obs_calc_metrics.m).  This should produce the following output:
 
@@ -195,9 +211,17 @@ Observer performance metrics
     MSD in steady-state         0.01877    0.47488    0.18608    0.027355
 ```
 
+
+### Sensitivity analysis
+
+To produce the heat-map plots in section 3.3.4, run the following Python notebook:
+
+ - [Heatmap-plots-of-sensitivity-results.ipynb](grind-sims/Heatmap-plots-of-sensitivity-results.ipynb)
+
+
 ## Unit tests
 
-A set of test scripts are included to verify that the main sub-routines are working correctly.  To run all the tests run the following command from the main directory of this repository.
+A set of test scripts are included in each of the main sub-directories, to verify that the main sub-routines are working correctly.  To run the tests run the following command from each sub-directory of the main repository.
 
 ```
 >> runtests
