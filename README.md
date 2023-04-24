@@ -4,14 +4,14 @@ MATLAB code and data to reproduce the simulation results in my masters thesis re
 
  - Tubbs, W. J., Multiple-Model Observers for Detecting Ore Feed Disturbances in Grinding Operations, Mémoire, May, 2023.
 
+![Figure showing average observer responses to step disturbances](images/rod_obs_sim_resp_plot1.png)
+
 For the code to reproduce the results of the following conference paper, presented at the 19th Symposium on Control, Optimization and Automation in Mining, Mineral and Metal Processing ([IFAC MMM](https://ifacmmm2022.org)) in Montreal:
 
 - Tubbs, W. J., Desbiens, A., and Bouchard, J. (2022). An Observer to Detect Infrequently-Occurring Disturbances in Grinding Operations.
 
 Refer to this repository instead:
 - [https://github.com/billtubbs/ifac-2022-mmkf](https://github.com/billtubbs/ifac-2022-mmkf)
-
-![Figure showing average observer responses to step disturbances](grind-sims/plots/rod_obs_sim_resp_plot1.png)
 
 The code has been tested with MATLAB versions 2019b, 2020b, and 2021b.  It may or may not work with other versions!
 
