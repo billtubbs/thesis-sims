@@ -33,7 +33,7 @@ The two systems considered are defined in the following files
 ### Process observers
 
  - [process-observers/obs_rodin_step.m](process-observers/obs_rodin_step.m)
- - [process-observers/obs_rodin_step_2x2.m](process-observers/obs_rodin_step_2x2_opt.m)
+ - [process-observers/obs_rodin_step_2x2_opt.m](process-observers/obs_rodin_step_2x2_opt.m)
 
 ### Tuning observer parameters
 
