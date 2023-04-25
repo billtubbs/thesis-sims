@@ -25,10 +25,10 @@ if ~isfolder(base_dir)
 end
 
 % Parameter values to search
-% floor(6 + 1.5 .^ [0 1 2 3 4 5 6 7 8 9 10 11 12 13])
-nh_values = {10 11 12 14 16 20 26 34 47 66 95 138 203};
-% floor(1.5 .^ [0 1 2 3 4 5 6 7 8 9 10 11 12])
-n_min_values = {1 2 3 5 7 11 17 25 38 57 86 129};
+% unique(floor(1.12 .^ (24:35)))
+n_min_values = {15, 17, 19, 21, 23, 26, 29, 33, 37, 42, 47, 52};
+% unique([floor(1.35 .^ [3 4 5 6 7 8 9])])
+n_add_values = {2, 3, 4, 6, 8, 11, 14};
 
 fprintf("Generating simulation specification files...\n")
 
@@ -66,26 +66,24 @@ data.outputs.setup_script = "rod_obs_sim_outputs.m";
 %data.outputs.results_file = "<placeholder>";  % don't save outputs
 data.outputs.summary_file = "rod_obs_sim_outputs_summary.csv";
 
-[nh_idx, n_min_idx] = ndgrid(nh_values, n_min_values);
-n_combs = numel(nh_idx);
-
-%n_seeds = numel(seed_values);
-%n_adj = numel(adj_values);
-%for i = 1:n_seeds
+[n_min_idx, n_add_idx] = ndgrid(n_min_values, n_add_values);
+n_combs = numel(n_min_idx);
 
 n_specs = 0;
 for i_comb = 1:n_combs
 
+    % number of shocks
+    nw = 2;
+
     % Get parameter values
-    nh = nh_idx{i_comb};  % fusion horizon
-    n_min = n_min_idx{i_comb};  % maximum number of shocks
+    n_min = n_min_idx{i_comb};  % minimum hypothesis life
+    n_hold = nw * n_min;
+    n_add = n_add_idx{i_comb};  % additional time steps
+    nh = n_hold + n_add;  % fusion horizon 
 
     % Check combination is valid
-    nw = 2;
-    n_hold = nw*n_min;
     n_main = nh - n_hold;
-
-    if n_main < nw
+    if (n_main < nw) || (n_min < nw) 
         fprintf("Skipping simulation due to nh - nw*n_min < nw\n")
         continue
     end
