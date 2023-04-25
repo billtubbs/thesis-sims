@@ -83,7 +83,7 @@ for i_comb = 1:n_combs
 
     % Check combination is valid
     n_main = nh - n_hold;
-    if (n_main < nw) || (n_min < nw) 
+    if (n_main < 1) || (n_min < nw) 
         fprintf("Skipping simulation due to nh - nw*n_min < nw\n")
         continue
     end

@@ -22,9 +22,9 @@ sims_dir = 'simulations';
 %sim_name = "rod_obs_sim2_3KF_Q";  % tuning of Kalman filters
 %sim_name = "rod_obs_sim2_MKF_SF_popt";  % re-ran 2022-12-08 after fixing MKF_SF_DI
 %sim_name = "rod_obs_sim2_MKF_SF95_popt";  % re-done 2022-11-29 with 0.2
-sim_name = "rod_obs_sim2_MKF_SP_popt";  % re-done 2023-04-24 with new param values
+%sim_name = "rod_obs_sim2_MKF_SP_popt";  % re-done 2023-04-24 with new param values
 %sim_name = "rod_obs_sim2_3KF_seed";
-%sim_name = "rod_obs_sim2_all_seed";
+sim_name = "rod_obs_sim2_all_seed";
 
 
 % Subdirectory for spec files

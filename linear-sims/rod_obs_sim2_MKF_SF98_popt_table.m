@@ -10,7 +10,7 @@ clear all; clc
 sims_dir = 'simulations';
 
 % Simulation group name
-sim_name = "rod_obs_sim3_MKF_SF_popt";
+sim_name = "rod_obs_sim2_MKF_SF_popt";
 
 % Create main directory for these simulations
 base_dir = fullfile(sims_dir, sim_name);
@@ -133,7 +133,7 @@ disp("\begin{tabular}{p{0.05\textwidth}>{\centering\arraybackslash}p{0.07\textwi
     ">{\centering\arraybackslash}p{0.24\textwidth}}")
 disp(strjoin(col_labels, ' & ') +  "  \\")
 disp("\hline")
-fprintf("%% See script rod_obs_sim3_MKF_SF98_popt_table.m\n")
+fprintf("%% See script rod_obs_sim2_MKF_SF98_popt_table.m\n")
 fprintf("%% %s results with seed = %d, sigma_M = [%g %g], d_min = %d\n", ...
     datetime(), seed, sigma_M, d_min)
 for i = 1:n_rows

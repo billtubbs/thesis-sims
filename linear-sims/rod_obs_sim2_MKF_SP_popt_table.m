@@ -120,7 +120,7 @@ disp("\begin{tabular}{p{0.05\textwidth}" + ...
     ">{\centering\arraybackslash}p{0.24\textwidth}}")
 disp(string(strjoin(col_labels, ' & ')) + "  \\")
 disp("\hline")
-fprintf("%% See script rod_obs_sim3_MKF_SP_popt_table.m\n")
+fprintf("%% See script rod_obs_sim2_MKF_SP_popt_table.m\n")
 fprintf("%% %s results with seed = %d, sigma_M = [%g %g]\n", ...
     datetime(), seed, sigma_M)
 for i = 1:n_rows
