@@ -24,6 +24,41 @@ The files for these simulations are in the [`linear-sims`](linear-sims) sub-dire
 
 The files for these simulations are in the [`linear-sims`](linear-sims) sub-directory.  Navigate to this directory and then follow the instructions below.
 
+### System models
+
+The two systems considered are defined in the following files
+ - [process-observers/sys_rodin_step.m](linear-sims/sys_rodin_step.m) - SISO linear system used in section 4.2.2
+ - [process-observers/rodin_step_2x2sym2.m](linear-sims/rodin_step_2x2sym2.m) - 2x2 linear system used in section 4.2.3
+
+### Process observers
+
+ - [process-observers/obs_rodin_step.m](process-observers/obs_rodin_step.m)
+ - [process-observers/obs_rodin_step_2x2_opt.m](process-observers/obs_rodin_step_2x2_opt.m)
+
+### Tuning observer parameters
+
+The observer parameters were chosen by running multiple simulations with different combinations of parameter values.  Run the following scripts in the sequence shown to generate the latex for the summary tables of observer parameter search results.  Note: these simulations can take a long time to run.
+
+For the Kalman filter (KF3):
+ - [linear-sims/gen_sim_specs_sim2_3KF_Q.m](linear-sims/gen_sim_specs_sim2_3KF_Q.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim2_3KF_seed"` uncommented
+ - [linear-sims/rod_obs_sim2_MKF_SF95_popt_table.m](linear-sims/rod_obs_sim2_MKF_SF95_popt_table.m)
+
+For the MKF_SF observer:
+ - [linear-sims/gen_sim_specs_sim2_MKF_SF95_popt.m](linear-sims/gen_sim_specs_sim2_MKF_SF95_popt.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim2_MKF_SF95_popt"` uncommented
+ - [linear-sims/rod_obs_sim2_MKF_SF95_popt_table.m](linear-sims/rod_obs_sim2_MKF_SF95_popt_table.m)
+
+For the MKF_SF observer:
+ - [linear-sims/gen_sim_specs_sim2_MKF_SF98_popt.m](linear-sims/gen_sim_specs_sim2_MKF_SF98_popt.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim2_MKF_SF_popt"` uncommented
+ - [linear-sims/rod_obs_sim2_MKF_SF98_popt_table.m](linear-sims/rod_obs_sim2_MKF_SF98_popt_table.m)
+
+For the MKF_SP observer:
+ - [linear-sims/gen_sim_specs_sim2_MKF_SP_popt.m](linear-sims/gen_sim_specs_sim2_MKF_SP_popt.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim2_MKF_SP_popt"` uncommented
+ - [linear-sims/rod_obs_sim2_MKF_SP_popt_table.m](linear-sims/rod_obs_sim2_MKF_SP_popt_table.m)
+
 
 ## 3. Observer simulations with grinding process simulator (section 3.3 of thesis report)
 
