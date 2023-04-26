@@ -16,8 +16,8 @@ addpath('~/ml-plot-utils')
 sims_dir = 'simulations';
 
 % Simulation group names
-%sim_name = "rod_obs_sim1_all_seed";
-sim_name = "rod_obs_sim2_all_seed";
+sim_name = "rod_obs_sim1_all_seed";
+%sim_name = "rod_obs_sim2_all_seed";
 
 % Choose seed to select which simulation results to plot
 switch sim_name
@@ -200,10 +200,10 @@ save_fig_to_pdf(fullfile(plot_dir, filename))
 %obs_sel_labels = {'KF3', 'SKF', 'MKF_SF95'};
 %obs_sel_labels = {'KF3', 'SKF', 'MKF_SP1'};
 %obs_sel_labels = {'KF1', 'KF3'};
-obs_sel_labels = {'MKF_SF95', 'MKF_SF1', 'SKF'};
+%obs_sel_labels = {'MKF_SF95', 'MKF_SF1', 'SKF'};
 %obs_sel_labels = {'MKF_SP1', 'SKF'};
 %obs_sel_labels = {'KF3', 'MKF_SF95', 'MKF_SP1', 'SKF'};
-%obs_sel_labels = {'KF3', 'MKF_SF95', 'MKF_SF1', 'MKF_SP1', 'SKF'};  % for sim1 & sim3
+obs_sel_labels = {'KF3', 'MKF_SF95', 'MKF_SF1', 'MKF_SP1', 'SKF'};  % for sim1 & sim3
 
 obs_sel = find(ismember(obs_labels, obs_sel_labels));
 n_obs = numel(obs_sel);

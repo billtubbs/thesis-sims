@@ -13,10 +13,10 @@ sims_dir = 'simulations';
 % SISO linear system (see sys_rodin_step.m)
 %sim_name = "rod_obs_sim1_3KF_Q";  % re-done 2023-04-26
 %sim_name = "rod_obs_sim1_3KF_seed";
-%sim_name = "rod_obs_sim1_MKF_SF_popt";  % re-run 2022-12-08 after fixing MKF_SF_DI
-%sim_name = "rod_obs_sim1_MKF_SF95_popt";  % re-done 2022-11-29
+%sim_name = "rod_obs_sim1_MKF_SF_popt";  % re-done 2023-04-26
+%sim_name = "rod_obs_sim1_MKF_SF95_popt";  % re-done 2023-04-26
 %sim_name = "rod_obs_sim1_MKF_SP_popt";  % re-done 2022-11-29
-%sim_name = "rod_obs_sim1_all_seed";
+sim_name = "rod_obs_sim1_all_seed";  % re-done 2023-04-26
 
 % 2x2 linear system (see rodin_step_2x2sym2.m)
 %sim_name = "rod_obs_sim2_3KF_Q";  % re-done 2023-04-26
@@ -24,7 +24,7 @@ sims_dir = 'simulations';
 %sim_name = "rod_obs_sim2_MKF_SF95_popt";  % re-done 2023-04-24
 %sim_name = "rod_obs_sim2_MKF_SP_popt";  % re-done 2023-04-24 with new param values
 %sim_name = "rod_obs_sim2_3KF_seed";
-sim_name = "rod_obs_sim2_all_seed";
+%sim_name = "rod_obs_sim2_all_seed";
 
 
 % Subdirectory for spec files
