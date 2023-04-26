@@ -19,8 +19,8 @@ sims_dir = 'simulations';
 %sim_name = "rod_obs_sim1_all_seed";
 
 % 2x2 linear system (see rodin_step_2x2sym2.m)
-%sim_name = "rod_obs_sim2_3KF_Q";  % tuning of Kalman filters
-sim_name = "rod_obs_sim2_MKF_SF_popt";  % re-done 2023-04-24
+sim_name = "rod_obs_sim2_3KF_Q";  % re-done 2023-04-25
+%sim_name = "rod_obs_sim2_MKF_SF_popt";  % re-done 2023-04-24
 %sim_name = "rod_obs_sim2_MKF_SF95_popt";  % re-done 2023-04-24
 %sim_name = "rod_obs_sim2_MKF_SP_popt";  % re-done 2023-04-24 with new param values
 %sim_name = "rod_obs_sim2_3KF_seed";
