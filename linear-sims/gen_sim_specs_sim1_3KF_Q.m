@@ -27,6 +27,9 @@ end
 % Seeds for each simulation
 seed_values = 0:9;
 
+% Default value to which adjustments are made
+sigma_wp_default = 0.1;
+
 % Use these adjustment factors to vary the parameter of interest
 adj_values = [ ...
     0.0100    0.0316    0.1000    0.1778    0.3162    0.5623    0.7499 ...
@@ -53,7 +56,7 @@ data.inputs.setup_script = "rod_obs_sim_inputs.m";
 
 % Observers
 data.observers.setup_script = "obs_rodin_step.m";
-data.observers.adj_script = "obs_rodin_step_KFadj.m";
+data.observers.adj_script = "obs_rodin_step_KF3adj.m";
 
 % Simulation setup
 data.setup.plot_dir = fullfile(sims_dir, sim_name, "plots");
@@ -81,7 +84,7 @@ for i = 1:n_seeds
 
         % Change simulation variables
         data.setup.seed = seed_values(i);
-        data.observers.params.adj = adj_values(j);
+        data.observers.params.sigma_wp = sigma_wp_default .* adj_values(j);
 
         % Save to Yaml file
         filename = sprintf("sim_spec_%02d_%02d.yml", i, j);

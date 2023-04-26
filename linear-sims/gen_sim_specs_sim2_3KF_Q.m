@@ -6,7 +6,7 @@ clear all
 addpath("~/yaml")
 
 % Main folder where all simulation results will be saved
-sims_dir = 'simulations';
+sims_dir = "simulations";
 
 % Simulation group name
 sim_name = "rod_obs_sim2_3KF_Q";
