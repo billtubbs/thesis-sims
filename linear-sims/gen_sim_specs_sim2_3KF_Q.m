@@ -55,7 +55,7 @@ data.system.label = "rodin_step";
 data.inputs.setup_script = "rod_obs_sim_inputs.m";
 
 % Observers
-data.observers.setup_script = "obs_rodin_step_2x2.m";
+data.observers.setup_script = "obs_rodin_step_2x2_opt.m";
 data.observers.adj_script = "obs_rodin_step_KF3adj.m";
 
 % Simulation setup
