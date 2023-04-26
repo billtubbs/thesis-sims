@@ -17,7 +17,8 @@ The code has been tested with MATLAB versions 2019b, 2020b, and 2021b.  It may o
 
 ## 1. Generating RODD disturbances (section 3.1 of thesis report)
 
-The files for these simulations are in the [`linear-sims`](linear-sims) sub-directory.  Navigate to this directory and then follow the instructions below.
+The files for these simulations are currently in this repository:
+ - https://github.com/billtubbs/thesis-report/
 
 
 ## 2. Observer simulations with linear systems (section 3.2 of thesis report)
@@ -32,8 +33,9 @@ The two systems considered are defined in the following files
 
 ### Process observers
 
- - [process-observers/obs_rodin_step.m](process-observers/obs_rodin_step.m)
- - [process-observers/obs_rodin_step_2x2_opt.m](process-observers/obs_rodin_step_2x2_opt.m)
+ - [process-observers/obs_rodin_step.m](process-observers/obs_rodin_step.m) - for the SISO linear system
+ - [linear-sims/obs_rodin_step_opt.m](process-observers/obs_rodin_step_opt.m) - with optimized parameters for the SISO linear system
+ - [linear-sims/obs_rodin_step_2x2_opt.m](process-observers/obs_rodin_step_2x2_opt.m) - with optimized parameters for the 2x2 linear system 
 
 ### Tuning observer parameters
 
@@ -42,7 +44,7 @@ The observer parameters were chosen by running multiple simulations with differe
 For the Kalman filter (KF3):
  - [linear-sims/gen_sim_specs_sim2_3KF_Q.m](linear-sims/gen_sim_specs_sim2_3KF_Q.m)
  - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim2_3KF_seed"` uncommented
- - [linear-sims/rod_obs_sim2_MKF_SF95_popt_table.m](linear-sims/rod_obs_sim2_MKF_SF95_popt_table.m)
+ - [linear-sims/rod_obs_sim2_plot_KF3_rmse.m](linear-sims/rod_obs_sim2_plot_KF3_rmse.m)
 
 For the MKF_SF observer:
  - [linear-sims/gen_sim_specs_sim2_MKF_SF95_popt.m](linear-sims/gen_sim_specs_sim2_MKF_SF95_popt.m)
@@ -58,6 +60,13 @@ For the MKF_SP observer:
  - [linear-sims/gen_sim_specs_sim2_MKF_SP_popt.m](linear-sims/gen_sim_specs_sim2_MKF_SP_popt.m)
  - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim2_MKF_SP_popt"` uncommented
  - [linear-sims/rod_obs_sim2_MKF_SP_popt_table.m](linear-sims/rod_obs_sim2_MKF_SP_popt_table.m)
+
+
+### Plots
+
+To produce the plot 'Effect of random variables on the RMSE results=' in Fig. A.2 run the following in sequence:
+ - [linear-sims/gen_sim_specs_sim1_3KF_seed.m](linear-sims/gen_sim_specs_sim1_3KF_seed.m)
+ - [linear-sims/rod_obs_sim_crmse_plot.m](linear-sims/rod_obs_sim_crmse_plot.m)
 
 
 ## 3. Observer simulations with grinding process simulator (section 3.3 of thesis report)
