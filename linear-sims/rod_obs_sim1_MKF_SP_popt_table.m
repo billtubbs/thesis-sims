@@ -4,7 +4,7 @@
 % This is for the table '...' in thesis report.
 %
 
-clear all; clc
+clear all
 
 % Main folder where all simulation results are saved
 sims_dir = 'simulations';

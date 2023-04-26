@@ -5,7 +5,7 @@
 % estimation errors' in thesis report.
 %
 
-clear all; clc
+clear all
 
 addpath('~/ml-plot-utils')
 
