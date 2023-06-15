@@ -3,8 +3,8 @@
 
 clear all
 
-addpath("~/yaml")
-addpath("~/process-observers/")
+addpath("../yaml")
+addpath("../process-observers")
 
 % Main folder where all simulation results will be saved
 sims_dir = 'simulations';

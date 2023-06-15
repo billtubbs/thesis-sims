@@ -3,7 +3,7 @@
 
 clear all
 
-addpath("~/yaml")
+addpath("../yaml")
 
 % Main folder where all simulation results will be saved
 sims_dir = 'simulations';

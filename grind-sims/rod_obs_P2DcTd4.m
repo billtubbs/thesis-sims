@@ -2,7 +2,7 @@
 %
 
 
-addpath('~/process-observers')
+addpath("../process-observers")
 
 
 %% Process and disturbance models

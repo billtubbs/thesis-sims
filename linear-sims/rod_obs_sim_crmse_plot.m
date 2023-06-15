@@ -1,7 +1,7 @@
 % Script to calculate convergence of RMSE over simulation duration.
 clear all
 
-addpath("~/ml-plot-utils/")
+addpath("../plot-utils/")
 
 % Main folder where all simulation results are saved
 sims_dir = 'simulations';

@@ -9,7 +9,7 @@
 clear all
 
 % Dependencies:
-addpath('~/process-observers')
+addpath("../process-observers")
 addpath('../data-utils')
 addpath('../plot-utils')
 

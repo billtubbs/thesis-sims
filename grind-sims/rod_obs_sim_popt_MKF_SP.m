@@ -9,7 +9,7 @@
 clear all
 
 % Specify path to observer functions
-addpath('~/process-observers')
+addpath("../process-observers")
 addpath('../ml-data-utils')
 addpath('../ml-plot-utils')
 

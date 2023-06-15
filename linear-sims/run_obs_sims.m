@@ -3,7 +3,7 @@
 %
 
 clear all
-addpath('~/process-observers/')
+addpath("../process-observers")
 
 % Main folder where all simulation results are saved
 sims_dir = 'simulations';

@@ -10,7 +10,7 @@ function run_obs_sim_spec(filename, filepath)
         filepath = '';
     end
 
-    addpath('~/yaml')
+    addpath("../yaml")
 
     % Load simulation specification file
     fprintf("%16s: '%s'\n", "Spec. file", filename)

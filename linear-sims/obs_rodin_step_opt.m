@@ -6,7 +6,7 @@
 %  - sys_rodin_step.m
 %
 
-addpath("~/process-observers/")
+addpath("../process-observers")
 
 assert(exist("A", 'var'), strcat("System model not defined. ", ...
     "Run script 'sys_rodin_step.m' first."))

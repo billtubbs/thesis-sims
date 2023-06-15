@@ -1,6 +1,6 @@
 % Prepares label strings for data storage and plotting
 
-addpath("~/ml-plot-utils/")
+addpath("../plot-utils/")
 
 % Make signal labels
 y_labels = vector_element_labels('y', '(k)', ny, false);

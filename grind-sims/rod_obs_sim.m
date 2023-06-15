@@ -31,7 +31,7 @@
 clear all
 
 % Specify path to observer functions and others
-addpath('~/process-observers')
+addpath("../process-observers")
 addpath('../data-utils')
 addpath('../plot-utils')
 

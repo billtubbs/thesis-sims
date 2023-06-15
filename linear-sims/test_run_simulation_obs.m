@@ -3,7 +3,10 @@
 clear all
 
 % Specify path to observer functions
-addpath('~/process-observers')
+addpath("../process-observers")
+
+% Data file used in test
+results_dir = "../process-observers/results";
 
 % SISO system example from GEL-7029 course, homework 12.
 % See file /gel-7029/homework/hw12/hw12_p3_kalman.m
@@ -77,7 +80,7 @@ filename = 'hw12_p3_kalman_sim_benchmark.csv';
 
 warnId = 'MATLAB:table:ModifiedAndSavedVarnames';
 warnStruct = warning('off',warnId);
-bench_sim_results = readtable(fullfile('results', filename));
+bench_sim_results = readtable(fullfile(results_dir, filename));
 warning(warnStruct);
 
 % Display benchmark simulation results

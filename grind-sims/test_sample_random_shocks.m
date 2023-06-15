@@ -3,7 +3,7 @@
 clear all
 
 % TODO: Replace this with a local copy when done
-addpath("~/process-observers/")
+addpath("../process-observers")
 
 
 %% single sequence - 1 distribution

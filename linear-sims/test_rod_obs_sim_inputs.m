@@ -1,5 +1,7 @@
 % Test rod_obs_sim_inputs.m
 
+addpath("../process-observers/")
+
 clear all
 test_data_dir = 'test_data';
 

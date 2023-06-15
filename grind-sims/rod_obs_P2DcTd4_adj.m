@@ -16,7 +16,7 @@
 %  - rod_obs_P2DcTd4.m
 
 
-addpath('~/process-observers')
+addpath("../process-observers")
 
 
 %% Process and disturbance models

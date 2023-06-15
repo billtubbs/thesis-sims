@@ -7,7 +7,7 @@
 
 clear all; clc
 
-addpath('~/ml-plot-utils')
+addpath("../plot-utils")
 
 % Main folder where all simulation results are saved
 sims_dir = 'simulations';

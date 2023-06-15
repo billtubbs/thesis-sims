@@ -9,8 +9,8 @@
 
 clear all
 
-addpath('~/ml-data-utils')
-addpath('~/ml-plot-utils')
+addpath("../data-utils")
+addpath("../plot-utils")
 
 % Main folder where all simulation results are saved
 sims_dir = 'simulations';
