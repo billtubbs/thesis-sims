@@ -1,4 +1,3 @@
-
 function labels = vector_element_labels(label,paren,n,lt)
 % labels = vector_element_labels(label,paren,n,lt)
 % Creates a cell array of labels of length n suitable
@@ -35,3 +34,5 @@ function labels = vector_element_labels(label,paren,n,lt)
     if lt == true
         labels = string2latex(labels);
     end
+
+end

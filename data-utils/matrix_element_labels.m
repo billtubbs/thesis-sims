@@ -36,3 +36,5 @@ function labels = matrix_element_labels(label,row_subs,col_subs,paren,lt)
     if lt == true
         labels = string2latex(labels);
     end
+
+end
