@@ -55,7 +55,7 @@ p_case = 1;  % Only case 1 used here
 %i_in_seqs = 3;
 %i_in_seqs = [1, 2, 3, 4, 5];
 %i_in_seqs = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-i_in_seqs = 1:15;
+i_in_seqs = 1:5;
 
 % Run observer simulations
 n_in_seqs = numel(i_in_seqs);
