@@ -16,8 +16,7 @@
 % See original model script for details:
 %  - rod_obs_P2Dcd1_T.m
 
-
-addpath('process-observers')
+addpath("../process-observers")
 
 
 %% Process and disturbance models

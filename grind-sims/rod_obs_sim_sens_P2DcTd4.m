@@ -37,7 +37,7 @@ addpath("../plot-utils")
 
 % Sub-directories used
 data_dir = 'data';
-results_dir = 'results/sens';
+results_dir = 'results/sens_P2DcTd4';
 if ~isfolder(results_dir)
     mkdir(results_dir);
 end

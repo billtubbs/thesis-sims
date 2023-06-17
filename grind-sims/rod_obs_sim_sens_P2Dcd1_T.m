@@ -43,8 +43,8 @@ if ~isfolder(results_dir)
 end
 
 % Specify application case
-p_case = 1;  % Vary process model parameters
-%p_case = 2;  % Vary RODD model parameters
+%p_case = 1;  % Vary process model parameters
+p_case = 2;  % Vary RODD model parameters
  
 % Specify which data set to run simulations with
 % I used:
