@@ -15,8 +15,8 @@ sims_dir = 'simulations';
 %sim_name = "rod_obs_sim1_3KF_seed";  % re-done 2023-04-26
 %sim_name = "rod_obs_sim1_MKF_SF_popt";  % re-done 2023-04-26
 %sim_name = "rod_obs_sim1_MKF_SF95_popt";  % re-done 2023-04-26
-sim_name = "rod_obs_sim1_MKF_SP_popt";  % re-done 2023-04-26
-%sim_name = "rod_obs_sim1_all_seed";  % re-done 2023-04-26
+%sim_name = "rod_obs_sim1_MKF_SP_popt";  % re-done 2023-04-26
+sim_name = "rod_obs_sim1_all_seed";  % re-done 2023-04-26
 
 % 2x2 linear system (see rodin_step_2x2sym2.m)
 %sim_name = "rod_obs_sim2_3KF_Q";  % re-done 2023-04-26
