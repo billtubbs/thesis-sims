@@ -137,8 +137,8 @@ label = 'MKF_SP1';
 P0 = 1000*eye(n);
 Q0 = diag([q1 q2 0 0]);
 R = diag(sigma_M.^2);
-nh = 46;  % number of hypotheses
-n_min = 21;  % minimum life of cloned hypotheses
+nh = 61;  % number of hypotheses
+n_min = 29;  % minimum life of cloned hypotheses
 io.u_known = u_known;
 io.y_meas = true(ny, 1);
 MKF_SP1 = MKFObserverSP_RODD(model,io,P0,epsilon,sigma_wp, ...
@@ -149,8 +149,8 @@ label = 'MKF_SP2';
 P0 = 1000*eye(n);
 Q0 = diag([q1 q2 0 0]);
 R = diag(sigma_M.^2);
-nh = 24;  % number of hypotheses
-n_min = 4;  % minimum life of cloned hypotheses
+nh = 55;  % number of hypotheses
+n_min = 26;  % minimum life of cloned hypotheses
 MKF_SP2 = MKFObserverSP_RODD(model,io,P0,epsilon,sigma_wp, ...
     Q0,R,nh,n_min,label);
 
