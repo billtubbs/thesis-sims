@@ -2,7 +2,7 @@
 
 MATLAB code and data to reproduce the simulation results in my Laval University masters thesis in electrical and computer engineering:
 
- - Tubbs, W. J., Multiple-Model Observers for Detecting Ore Feed Disturbances in Grinding Operations, Mémoire, May, 2023.
+ - [Multiple-model observers for detecting ore feed disturbances in grinding operations](http://hdl.handle.net/20.500.11794/118186), Masters thesis, 2023.
 
 <img src="images/rod_obs_sim_resp_plot1.png" width="50%">
 
