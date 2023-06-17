@@ -1,6 +1,6 @@
 function [metrics, params, errors, labels] = calculate_obs_metrics(Y, ...
         Y_est, obs_labels, Pd, Ts, tau_ss)
-% Used by rod_obs_sim.m to compute observer metrics from
+% Used by rod_obs_sim scripts to compute observer metrics from
 % simulation results.
 %
 

@@ -10,8 +10,8 @@ clear all
 
 % Dependencies:
 addpath("../process-observers")
-addpath('../data-utils')
-addpath('../plot-utils')
+addpath("../data-utils")
+addpath("../plot-utils")
 
 % Sub-directories used
 data_dir = 'data';

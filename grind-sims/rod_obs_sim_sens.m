@@ -32,8 +32,8 @@ clear all
 
 % Specify path to observer functions and others
 addpath("../process-observers")
-addpath('../data-utils')
-addpath('../plot-utils')
+addpath("../data-utils")
+addpath("../plot-utils")
 
 % Sub-directories used
 data_dir = 'data';
@@ -43,8 +43,8 @@ if ~isfolder(results_dir)
 end
 
 % Specify application case
-%p_case = 1;  % Vary process model parameters
-p_case = 2;  % Vary RODD model parameters
+p_case = 1;  % Vary process model parameters
+%p_case = 2;  % Vary RODD model parameters
  
 % Specify which data set to run simulations with
 % I used:
@@ -196,7 +196,7 @@ for i_iter = 1:n_combs
     %% Display and save simulation results
     
     % Remove semi-colon to display results table
-    sim_out.data
+    sim_out.data;
 
     filename = sprintf('rod_obs_sim_%d_%d.csv', p_case, i_in_seq);
     writetable(drop_empty_cols(sim_out.data), fullfile(results_dir, filename));
@@ -248,9 +248,11 @@ for i_iter = 1:n_combs
 
     %% Compute observer performance metrics
 
-    % The following script uses the values stored in
-    [metrics, metrics_params, errors, metrics_labels] = calculate_obs_metrics(Y, Y_est, ...
-        obs_labels, Pd, Ts);
+    % Approximate settling time (was 0.43*3)
+    tau_ss = 1.2;
+
+    [metrics, metrics_params, errors, metrics_labels] = ...
+        calculate_obs_metrics(Y, Y_est, obs_labels, Pd, Ts, tau_ss);
 
     % Make metrics labels for all observers, e.g. for observer 'KF1':
     %  - 'MSE_y_est_KF1' : overall MSE

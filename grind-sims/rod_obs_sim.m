@@ -32,8 +32,8 @@ clear all
 
 % Specify path to observer functions and others
 addpath("../process-observers")
-addpath('../data-utils')
-addpath('../plot-utils')
+addpath("../data-utils")
+addpath("../plot-utils")
 
 % Sub-directories used
 data_dir = 'data';
@@ -191,10 +191,9 @@ for i_seq = 1:n_in_seqs
 
     %% Compute observer performance metrics
 
-    % approximate settling time (was 0.43*3)
+    % Approximate settling time (was 0.43*3)
     tau_ss = 1.2;
 
-    % The following script uses the values stored in
     [metrics, metrics_params, errors, metrics_labels] = ...
         calculate_obs_metrics(Y, Y_est, obs_labels, Pd, Ts, tau_ss);
 

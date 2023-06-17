@@ -3,7 +3,7 @@ function s2 = string2latex(s1)
 % format by adding the '$' character at the beginning and end
 % of each string.
 
-% Note: this is a copy of the master in ml-plot-utils.
+% Note: this is a copy of the master in plot-utils.
 
     switch class(s1)
         case {'char', 'string'}
