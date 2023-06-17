@@ -1,17 +1,14 @@
 # thesis-sims
 
-MATLAB code and data to reproduce the simulation results in my masters thesis report:
+MATLAB code and data to reproduce the simulation results in my Laval University masters thesis in electrical and computer engineering:
 
  - Tubbs, W. J., Multiple-Model Observers for Detecting Ore Feed Disturbances in Grinding Operations, Mémoire, May, 2023.
 
-![Figure showing average observer responses to step disturbances](images/rod_obs_sim_resp_plot1.png)
+<img src="images/rod_obs_sim_resp_plot1.png" width="50%">
 
-For the code to reproduce the results of the following conference paper, presented at the 19th Symposium on Control, Optimization and Automation in Mining, Mineral and Metal Processing ([IFAC MMM](https://ifacmmm2022.org)) in Montreal:
+For the code to reproduce the results of the following conference paper, refer to this repository instead [https://github.com/billtubbs/ifac-2022-mmkf](https://github.com/billtubbs/ifac-2022-mmkf).
 
-- Tubbs, W. J., Desbiens, A., and Bouchard, J. (2022). An Observer to Detect Infrequently-Occurring Disturbances in Grinding Operations.
-
-Refer to this repository instead:
-- [https://github.com/billtubbs/ifac-2022-mmkf](https://github.com/billtubbs/ifac-2022-mmkf)
+- William Tubbs, André Desbiens, Jocelyn Bouchard, An Observer to Detect Infrequently-Occurring Disturbances in Grinding Operations, IFAC-PapersOnLine, Volume 55, Issue 21, 2022, Pages 13-18, ISSN 2405-8963, https://doi.org/10.1016/j.ifacol.2022.09.236.
 
 The code has been tested with MATLAB versions 2019b, 2020b, and 2021b.  It may or may not work with other versions!
 
@@ -98,25 +95,27 @@ i_in_seqs = [1, 2, 3, 4, 5];
 To change which observers are included in the simulations, edit line 82:
 
 ```
-observers = {KF1, KF2, MMKF, SKF};
+observers = {KF1, KF2, KF3, MKF_SF95, MKF_SF1, MKF_SP1, SKF};
 ```
 
-The observers are defined in separate script files and loaded on line 72. The observers used in the paper are defined in the file [rod_obs_P2DcTd4.m](rod_obs_P2DcTd4.m).
+The observers are defined in separate script files.
 
 Running [rod_obs_sim.m](rod_obs_sim.m) with the above settings should produce the following output:
 
 ```lang-none
 Starting observer simulations with input seq. #1 ...
 Observer simulation results saved to file: rod_obs_sim_1_1.csv
-MKF simulation results saved to file: rod_obs_sim_1_1_MMKF.csv
-                                  KF1         KF2       MMKF        SKF   
-                                ________    _______    _______    ________
+MKF simulation results saved to file: rod_obs_sim_1_1_MKF_SF95.csv
+MKF simulation results saved to file: rod_obs_sim_1_1_MKF_SF1.csv
+MKF simulation results saved to file: rod_obs_sim_1_1_MKF_SP1.csv
+                                  KF1       KF2        KF3      MKF_SF95    MKF_SF1    MKF_SP1      SKF
+                                _______    ______    _______    ________    _______    _______    _______
 
-    MSE                           13.203     5.3668     6.4214      2.0248
-    MSE in transitions            16.599     8.0912     11.153      3.4493
-    MSE in steady-state           9.6918     2.5503     1.5299     0.55223
-    Variance in steady-state     0.60641      1.853     1.4864     0.33968
-    MSD in steady-state         0.078099    0.61098    0.45144    0.090377
+    RMSE                         3.5629    2.9746     2.1599     2.0206       2.014     2.1431     1.2235
+    RMSE in transitions           3.937    2.7732     2.6771     2.6254      2.5853      2.814     1.5633
+    RMSE in steady-state         3.1534    3.1596     1.4876     1.1525      1.2169     1.1546    0.75418
+    Variance in steady-state    0.67006    8.7855     1.5117      1.369      1.3116     1.1122    0.36806
+    RMSD in steady-state        0.26817    3.0764    0.67384    0.59802     0.59391    0.57502    0.29097
 
 Existing results loaded from file: rod_obs_sim_1_summary.csv
 Summary results saved to file: rod_obs_sim_1_summary.csv
@@ -126,15 +125,17 @@ Step responses saved to file: rod_obs_sim_1_resps.csv
 
 Starting observer simulations with input seq. #2 ...
 Observer simulation results saved to file: rod_obs_sim_1_2.csv
-MKF simulation results saved to file: rod_obs_sim_1_2_MMKF.csv
-                                  KF1        KF2       MMKF        SKF   
-                                _______    _______    _______    ________
+MKF simulation results saved to file: rod_obs_sim_1_2_MKF_SF95.csv
+MKF simulation results saved to file: rod_obs_sim_1_2_MKF_SF1.csv
+MKF simulation results saved to file: rod_obs_sim_1_2_MKF_SP1.csv
+                                  KF1       KF2        KF3      MKF_SF95    MKF_SF1    MKF_SP1      SKF
+                                _______    ______    _______    ________    _______    _______    ________
 
-    MSE                          12.896      6.172     7.3609      3.8419
-    MSE in transitions           16.496     9.4356     11.801      5.9662
-    MSE in steady-state          7.6137     1.3835    0.84597     0.72503
-    Variance in steady-state    0.17145    0.85934     0.1954    0.084305
-    MSD in steady-state         0.14191    0.49749     0.2114     0.15805
+    RMSE                         3.5217    3.0487     2.3228     2.4687      2.4607     2.5192      1.7649
+    RMSE in transitions          3.9721    3.3371     2.9114     3.1844      3.1581     3.2259       2.216
+    RMSE in steady-state         2.8002    2.6088     1.1098    0.79101     0.87124    0.92697     0.82963
+    Variance in steady-state    0.18654     6.595     0.6185    0.15753     0.24418     0.2708    0.089818
+    RMSD in steady-state        0.34913    2.5483    0.59618    0.42227     0.46404    0.44366     0.37122
 
 Existing results loaded from file: rod_obs_sim_1_summary.csv
 Summary results saved to file: rod_obs_sim_1_summary.csv
@@ -144,15 +145,17 @@ Step responses saved to file: rod_obs_sim_1_resps.csv
 
 Starting observer simulations with input seq. #3 ...
 Observer simulation results saved to file: rod_obs_sim_1_3.csv
-MKF simulation results saved to file: rod_obs_sim_1_3_MMKF.csv
-                                  KF1         KF2       MMKF        SKF   
-                                ________    _______    _______    ________
+MKF simulation results saved to file: rod_obs_sim_1_3_MKF_SF95.csv
+MKF simulation results saved to file: rod_obs_sim_1_3_MKF_SF1.csv
+MKF simulation results saved to file: rod_obs_sim_1_3_MKF_SP1.csv
+                                  KF1       KF2        KF3      MKF_SF95    MKF_SF1    MKF_SP1      SKF
+                                _______    ______    _______    ________    _______    _______    _______
 
-    MSE                           13.158     5.2879     5.6822      3.0922
-    MSE in transitions            19.438     10.887     12.999      6.8109
-    MSE in steady-state           9.0511     1.6272    0.89797     0.66078
-    Variance in steady-state      1.2855     2.0615    0.79139     0.24399
-    MSD in steady-state         0.050168    0.52153    0.33597    0.062398
+    RMSE                         3.5484    3.0647     2.1525      2.187      2.2579     2.1788     1.5972
+    RMSE in transitions          4.2352     3.178     3.1659     3.3339      3.3265     3.3047     2.3832
+    RMSE in steady-state         3.0623    2.9946     1.1804    0.98834      1.2294      1.018     0.8188
+    Variance in steady-state     1.3538     10.76      1.795    0.89845      1.5499    0.99461    0.26255
+    RMSD in steady-state        0.21132    2.8264    0.60988    0.50948     0.66169    0.58495    0.24328
 
 Existing results loaded from file: rod_obs_sim_1_summary.csv
 Summary results saved to file: rod_obs_sim_1_summary.csv
@@ -162,15 +165,17 @@ Step responses saved to file: rod_obs_sim_1_resps.csv
 
 Starting observer simulations with input seq. #4 ...
 Observer simulation results saved to file: rod_obs_sim_1_4.csv
-MKF simulation results saved to file: rod_obs_sim_1_4_MMKF.csv
-                                  KF1         KF2       MMKF        SKF   
-                                ________    _______    _______    ________
+MKF simulation results saved to file: rod_obs_sim_1_4_MKF_SF95.csv
+MKF simulation results saved to file: rod_obs_sim_1_4_MKF_SF1.csv
+MKF simulation results saved to file: rod_obs_sim_1_4_MKF_SP1.csv
+                                  KF1       KF2        KF3      MKF_SF95    MKF_SF1    MKF_SP1      SKF
+                                _______    ______    _______    ________    _______    _______    _______
 
-    MSE                           12.477     4.4433      3.396      1.6462
-    MSE in transitions            21.344     9.1515      8.379       4.022
-    MSE in steady-state           8.1971     2.1704    0.99047     0.49932
-    Variance in steady-state     0.74033     1.8508     1.0572     0.16772
-    MSD in steady-state         0.066378    0.53011    0.28178    0.079604
+    RMSE                         3.4658    3.3323     2.0001     1.5196      1.7333     1.6168     1.1457
+    RMSE in transitions          4.5037    3.3486     2.9724     2.3109      2.6663     2.5423     1.7677
+    RMSE in steady-state         2.8932    3.3251     1.3684    0.98738      1.0944    0.95898    0.71758
+    Variance in steady-state    0.81292    11.633     1.5673    0.99212      1.1773    0.72147     0.1773
+    RMSD in steady-state        0.24586    2.7882    0.61642    0.59055     0.60218    0.51876    0.27521
 
 Existing results loaded from file: rod_obs_sim_1_summary.csv
 Summary results saved to file: rod_obs_sim_1_summary.csv
@@ -180,23 +185,26 @@ Step responses saved to file: rod_obs_sim_1_resps.csv
 
 Starting observer simulations with input seq. #5 ...
 Observer simulation results saved to file: rod_obs_sim_1_5.csv
-MKF simulation results saved to file: rod_obs_sim_1_5_MMKF.csv
-                                  KF1        KF2       MMKF        SKF   
-                                _______    _______    _______    ________
+MKF simulation results saved to file: rod_obs_sim_1_5_MKF_SF95.csv
+MKF simulation results saved to file: rod_obs_sim_1_5_MKF_SF1.csv
+MKF simulation results saved to file: rod_obs_sim_1_5_MKF_SP1.csv
+                                  KF1       KF2        KF3      MKF_SF95    MKF_SF1    MKF_SP1      SKF
+                                _______    ______    _______    ________    _______    _______    ________
 
-    MSE                          9.9241     4.7978     6.2782      3.4599
-    MSE in transitions           14.866     7.4398     10.229      5.9586
-    MSE in steady-state          3.7654     1.5051     1.3542     0.34583
-    Variance in steady-state    0.70824     1.6496    0.79905    0.066931
-    MSD in steady-state         0.12998    0.50721    0.28792     0.13821
+    RMSE                         3.0909    3.0379     2.0435     2.3128      2.1737     2.414       1.6779
+    RMSE in transitions          3.7779    3.2699     2.5635     3.0196      2.8178    2.9945       2.2029
+    RMSE in steady-state         1.9567    2.7302     1.1266    0.88113     0.90784    1.4206      0.58628
+    Variance in steady-state    0.76163    9.5025     1.3601    0.69641     0.67505    1.1633     0.070481
+    RMSD in steady-state        0.35642    2.5906    0.62558    0.55192     0.52433    0.6603      0.36777
 
 Existing results loaded from file: rod_obs_sim_1_summary.csv
 Summary results saved to file: rod_obs_sim_1_summary.csv
 Step responses identified: 0
 Existing step responses loaded from file: rod_obs_sim_1_resps.csv
 Step responses saved to file: rod_obs_sim_1_resps.csv
-Run rod_obs_sim_plots.m to produce plots.
-Run rod_obs_calc_metrics.m to calculate evaluation metrics.
+run rod_obs_sim_plots.m to produce plots.
+run rod_obs_calc_metrics.m to calculate evaluation metrics.
+run rod_obs_step_plots.m to produce step response summary plot.
 ```
 
 ### Simulation results
@@ -237,7 +245,7 @@ After running these scripts, images of the plot figures will be saved in the [pl
 
 ### Evaluation metrics
 
-To calculate the evaluation metrics in Table 2 in the paper, run the script [rod_obs_calc_metrics.m](rod_obs_calc_metrics.m).  This should produce the following output:
+To calculate the evaluation metrics in Table 3.8 of the thesis report, run the script [rod_obs_calc_metrics.m](rod_obs_calc_metrics.m).  This should produce the following output:
 
 ```lang-none
 Simulation results loaded from file: rod_obs_sim_1_summary.csv
@@ -245,20 +253,31 @@ Results for the following simulations found:
      6     7     8     9    10    11    12    13    14    15
 
 Observer performance metrics
-                                  KF1        KF2       MMKF        SKF   
-                                _______    _______    _______    ________
+                                  KF1       KF2        KF3      MKF_SF95    MKF_SF1    MKF_SP1      SKF
+                                _______    ______    _______    ________    _______    _______    _______
 
-    MSE                           10.62     3.2917     2.9108      1.5636
-    MSE in transitions           20.343     6.2949     8.6852      4.0146
-    MSE in steady-state          7.6436     2.3723     1.1431     0.81326
-    Variance in steady-state     1.7384     1.8211    0.52937     0.23148
-    MSD in steady-state         0.01877    0.47488    0.18608    0.027355
+    RMSE                         3.2491    3.2575     1.8059     1.6982      1.6558     1.6719     1.2441
+    RMSE in transitions          4.4357    3.2636     2.6902     2.9474      2.8302     2.9277      2.041
+    RMSE in steady-state         2.8276    3.2547     1.4636     1.1186      1.1225     1.0807    0.89732
+    Variance in steady-state     1.8572    10.064     1.6117    0.66163     0.69619    0.57594     0.2463
+    RMSD in steady-state        0.13665    2.9053    0.61527    0.43946     0.45231    0.43034    0.16967
+
+Latex table code:
+\hline
+% See script rod_obs_calc_metrics.m
+% 16-Jun-2023 17:26:43 results with system P2DcTd4, sigma_M = 5, tau_ss = 1.2
+RMSE($\hat{\mathbf{Y}},\mathbf{Y}$) overall & 1.81 & 1.70 & 1.66 & 1.67 & 1.24 \\
+RMSE($\hat{\mathbf{Y}},\mathbf{Y}$) transient & 2.69 & 2.95 & 2.83 & 2.93 & 2.04 \\
+RMSE($\hat{\mathbf{Y}},\mathbf{Y}$) steady-state & 1.46 & 1.12 & 1.12 & 1.08 & 0.90 \\
+Var($\hat{\mathbf{Y}}$) steady-state & 1.61 & 0.66 & 0.70 & 0.58 & 0.25 \\
+RMSD($\hat{\mathbf{Y}},\mathbf{Y}$) steady-state &0.62 & 0.44 & 0.45 & 0.43 & 0.17 \\
+\hline
 ```
 
 
 ### Sensitivity analysis
 
-To produce the heat-map plots in section 3.3.4, run the following Python notebook:
+To produce the heat-map plots in figures 3.33 and 3.34, run the following Python notebook:
 
  - [Heatmap-plots-of-sensitivity-results.ipynb](grind-sims/Heatmap-plots-of-sensitivity-results.ipynb)
 
