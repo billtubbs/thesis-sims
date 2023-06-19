@@ -104,7 +104,7 @@ Run the following scripts (these take a while):
 
 ### Plots
 
-To make the various plots of the simualtion results in section 3.2.2, run the following script, with the line `sim_name = "rod_obs_sim1_all_seed";` uncommented.
+To make the various plots of the simulation results in section 3.2.2, run the following script, with the line `sim_name = "rod_obs_sim1_all_seed";` uncommented.
 
 Also uncomment one of the lines in the section `choose observers to include in plots` to determine which observer results to include int he plots.  For example, to make the box plot in Figure 3.20, use the following:'
 ```lang-matlab
@@ -340,13 +340,13 @@ RMSD($\hat{\mathbf{Y}},\mathbf{Y}$) steady-state &0.62 & 0.44 & 0.45 & 0.43 & 0.
 To run the simulations for the sensitivity analysis in section 3.3.4, run the following script:
 
 ```lang-matlab
-rod_obs_sim_sens_P2DcTd4.m
+rod_obs_sim_sens_P2DcTd4
 ```
 
 There is also a script to run the sensitivity analysis with observers that have the improved system model, but these results were not included in the thesis as they were not significantly different:
 
 ```lang-matlab
-rod_obs_sim_sens_P2Dcd1_T.m
+rod_obs_sim_sens_P2Dcd1_T
 ```
 
 To produce the heat-map plots in figures 3.33 and 3.34, run the following Python notebook:
@@ -358,5 +358,5 @@ To produce the heat-map plots in figures 3.33 and 3.34, run the following Python
 A set of test scripts are included in each of the main sub-directories, to verify that the main sub-routines are working correctly.  To run the tests run the following command from each sub-directory of the main repository.
 
 ```lang-matlab
->> runtests
+runtests
 ```
