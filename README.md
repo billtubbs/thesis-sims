@@ -4,13 +4,14 @@ MATLAB code and data to reproduce the simulation results in my Laval University 
 
  - [Multiple-model observers for detecting ore feed disturbances in grinding operations](http://hdl.handle.net/20.500.11794/118186), Masters thesis, 2023.
 
-<img src="images/rod_obs_sim_resp_plot1.png" width="50%">
+<img src="images/rod_obs_sim_resp_plot1.png" width="60%">
 
 For the code to reproduce the results of the following conference paper, refer to this repository instead [https://github.com/billtubbs/ifac-2022-mmkf](https://github.com/billtubbs/ifac-2022-mmkf).
 
 - William Tubbs, André Desbiens, Jocelyn Bouchard, An Observer to Detect Infrequently-Occurring Disturbances in Grinding Operations, IFAC-PapersOnLine, Volume 55, Issue 21, 2022, Pages 13-18, ISSN 2405-8963, https://doi.org/10.1016/j.ifacol.2022.09.236.
 
-The code has been tested with MATLAB versions 2019b, 2020b, and 2021b.  It may or may not work with other versions!
+The code in this repository has been tested with MATLAB versions 2019b, 2020b, and 2021b.  It may or may not work with other versions!
+
 
 ## 1. Generating RODD disturbances (section 3.1 of thesis report)
 
@@ -22,33 +23,67 @@ The files for these simulations are currently in this repository:
 
 The files for these simulations are in the [`linear-sims`](linear-sims) sub-directory.  Navigate to this directory and then follow the instructions below.
 
+
 ### System models
 
 The two systems considered are defined in the following files
- - [process-observers/sys_rodin_step.m](linear-sims/sys_rodin_step.m) - SISO linear system used in section 4.2.2
- - [process-observers/rodin_step_2x2sym2.m](linear-sims/rodin_step_2x2sym2.m) - 2x2 linear system used in section 4.2.3
+ - [linear-sims/sys_rodin_step.m](linear-sims/sys_rodin_step.m) - SISO linear system described in section 3.2.1 and used in the simulations in section 3.2.2
+ - [linear-sims/sys_rodin_step_2x2sym2.m](linear-sims/sys_rodin_step_2x2sym2.m) - 2x2 linear system used in section 3.2.3
+
 
 ### Process observers
 
- - [process-observers/obs_rodin_step.m](process-observers/obs_rodin_step.m) - for the SISO linear system
- - [linear-sims/obs_rodin_step_opt.m](process-observers/obs_rodin_step_opt.m) - with optimized parameters for the SISO linear system
- - [linear-sims/obs_rodin_step_2x2_opt.m](process-observers/obs_rodin_step_2x2_opt.m) - with optimized parameters for the 2x2 linear system 
+ - [process-observers/obs_rodin_step.m](process-observers/obs_rodin_step.m) - observers with un-optimized parameters used for the SISO simulations at the beginning of section 3.2.2
+ - [linear-sims/obs_rodin_step_opt.m](linear-sims/obs_rodin_step_opt.m) - observers with optimized parameters for the SISO simulations at the end of section 3.2.2
+ - [linear-sims/obs_rodin_step_2x2_opt.m](linear-sims/obs_rodin_step_2x2_opt.m) - observers with with optimized parameters for the 2x2 linear system simulations in section 3.2.3
 
-### Tuning observer parameters
+
+### Observer parameter tuning experiments with SISO linear system (section 3.2.2)
 
 The observer parameters were chosen by running multiple simulations with different combinations of parameter values.  Run the following scripts in the sequence shown to generate the latex for the summary tables of observer parameter search results.  Note: these simulations can take a long time to run.
+
+For the Kalman filter (KF3):
+ - [linear-sims/gen_sim_specs_sim1_3KF_Q.m](linear-sims/gen_sim_specs_sim1_3KF_Q.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim1_3KF_seed"` uncommented
+ - [linear-sims/rod_obs_sim1_plot_KF3_rmse.m](linear-sims/rod_obs_sim1_plot_KF3_rmse.m)
+
+For the MKF_SF observer (1995 version):
+ - [linear-sims/gen_sim_specs_sim1_MKF_SF95_popt.m](linear-sims/gen_sim_specs_sim1_MKF_SF95_popt.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim1_MKF_SF95_popt"` uncommented
+ - [linear-sims/rod_obs_sim1_MKF_SF95_popt_table.m](linear-sims/rod_obs_sim1_MKF_SF95_popt_table.m)
+
+For the MKF_SF observer (1998 version):
+ - [linear-sims/gen_sim_specs_sim1_MKF_SF98_popt.m](linear-sims/gen_sim_specs_sim1_MKF_SF98_popt.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim1_MKF_SF_popt"` uncommented
+ - [linear-sims/rod_obs_sim1_MKF_SF98_popt_table.m](linear-sims/rod_obs_sim1_MKF_SF98_popt_table.m)
+
+For the MKF_SP observer:
+ - [linear-sims/gen_sim_specs_sim1_MKF_SP_popt.m](linear-sims/gen_sim_specs_sim1_MKF_SP_popt.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim1_MKF_SP_popt"` uncommented
+ - [linear-sims/rod_obs_sim1_MKF_SP_popt_table.m](linear-sims/rod_obs_sim1_MKF_SP_popt_table.m)
+
+
+### Observer evaluation simulations with SISO linear system (section 3.2.2)
+
+Run the following scripts (these take a while):
+ - [linear-sims/gen_sim_specs_sim1_all_seed.m](linear-sims/gen_sim_specs_sim1_all_seed.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim1_all_seed"` uncommented
+ - [linear-sims/rod_obs_sim1_MKF_SP_popt_table.m](linear-sims/rod_obs_sim1_MKF_SP_popt_table.m)
+
+
+### Observer parameter tuning experiments with 2x2 linear system (section 3.2.3)
 
 For the Kalman filter (KF3):
  - [linear-sims/gen_sim_specs_sim2_3KF_Q.m](linear-sims/gen_sim_specs_sim2_3KF_Q.m)
  - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim2_3KF_seed"` uncommented
  - [linear-sims/rod_obs_sim2_plot_KF3_rmse.m](linear-sims/rod_obs_sim2_plot_KF3_rmse.m)
 
-For the MKF_SF observer:
+For the MKF_SF observer (1995 version):
  - [linear-sims/gen_sim_specs_sim2_MKF_SF95_popt.m](linear-sims/gen_sim_specs_sim2_MKF_SF95_popt.m)
  - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim2_MKF_SF95_popt"` uncommented
  - [linear-sims/rod_obs_sim2_MKF_SF95_popt_table.m](linear-sims/rod_obs_sim2_MKF_SF95_popt_table.m)
 
-For the MKF_SF observer:
+For the MKF_SF observer (1998 version):
  - [linear-sims/gen_sim_specs_sim2_MKF_SF98_popt.m](linear-sims/gen_sim_specs_sim2_MKF_SF98_popt.m)
  - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim2_MKF_SF_popt"` uncommented
  - [linear-sims/rod_obs_sim2_MKF_SF98_popt_table.m](linear-sims/rod_obs_sim2_MKF_SF98_popt_table.m)
@@ -59,10 +94,26 @@ For the MKF_SP observer:
  - [linear-sims/rod_obs_sim2_MKF_SP_popt_table.m](linear-sims/rod_obs_sim2_MKF_SP_popt_table.m)
 
 
+### Observer evaluation simulations with 2x2 linear system (section 3.2.3)
+
+Run the following scripts (these take a while):
+ - [linear-sims/gen_sim_specs_sim2_all_seed.m](linear-sims/gen_sim_specs_sim2_all_seed.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim2_all_seed"` uncommented
+ - [linear-sims/rod_obs_sim2_MKF_SP_popt_table.m](linear-sims/rod_obs_sim2_MKF_SP_popt_table.m)
+
+
 ### Plots
 
-To produce the plot 'Effect of random variables on the RMSE results=' in Fig. A.2 run the following in sequence:
+To make the various plots of the simualtion results in section 3.2.2, run the following script, with the line `sim_name = "rod_obs_sim1_all_seed";` uncommented.
+
+Also uncomment one of the lines in the section `choose observers to include in plots` to determine which observer results to include int he plots.  For example, to make the box plot in Figure 3.20, use the following:'
+```lang-matlab
+obs_sel_labels = {'KF3', 'MKF_SF95', 'MKF_SF1', 'MKF_SP1', 'SKF'};
+```
+
+To produce the plot 'Effect of random variables on the RMSE results=' in Fig. A.2 in the Appendix, run the following in sequence:
  - [linear-sims/gen_sim_specs_sim1_3KF_seed.m](linear-sims/gen_sim_specs_sim1_3KF_seed.m)
+ - [linear-sims/run_obs_sims.m](linear-sims/run_obs_sims.m) with the line `sim_name = "rod_obs_sim1_3KF_seed";` uncommented
  - [linear-sims/rod_obs_sim_crmse_plot.m](linear-sims/rod_obs_sim_crmse_plot.m)
 
 
@@ -70,7 +121,10 @@ To produce the plot 'Effect of random variables on the RMSE results=' in Fig. A.
 
 The files for these simulations are in the [`grind-sims`](grind-sims) sub-directory.  Navigate to this directory and then follow the instructions below.
 
-### Input data
+
+### Data from grinding simulation model
+
+The grinding simulation model used in these simulations is not included.  Instead, input-output data from simulations with this model is saved in the following directory:
 
 The [data](data) subdirectory contains time-series data sets from 15 simulations of a grinding process model (the model itself is not available here).  Data sets 1 to 5 contain short simulations of 300 time steps.  Simulations 6 to 15 contain longer simulations of 2460 time steps.  The files contain data for 7 process variables although only two were used in this work (BASE_ORE_MIX and SAG_OF_P80_M).
 
@@ -84,17 +138,23 @@ The [data](data) subdirectory contains time-series data sets from 15 simulations
 | 6 ... 15  | sim_OL_rc_est_mix_factor_2460_6_ident.csv ... sim_OL_rc_est_mix_factor_2460_15_ident.csv  | Observer evaluation (RMSE results in Table 2 and Fig. 6 in paper)    |
 
 
+### Process observers
+
+ - [grind-sims/rod_obs_P2DcTd4.m](grind-sims/rod_obs_P2DcTd4.m) - observers with the identified linear system model and optimized parameters used for the grinding simulations in section 3.2.3.
+ - [grind-sims/rod_obs_P2Dcd1_T.m](grind-sims/rod_obs_P2Dcd1_T.m) - these observers have a system model identified from simulation data without measurement nosie. This model provides better predictions of the true simulation outputs than the model identified from noisy measurements. However, results using these observers were not included in the thesis results.
+
+
 ### Instructions to reproduce the results
 
 Open the script [rod_obs_sim.m](rod_obs_sim.m) and specify the input data sequences to include in the simulations in lines 55-57.  For example, specify the first 5 as follows:
 
-```
+```lang-matlab
 i_in_seqs = [1, 2, 3, 4, 5];
 ```
 
 To change which observers are included in the simulations, edit line 82:
 
-```
+```lang-matlab
 observers = {KF1, KF2, KF3, MKF_SF95, MKF_SF1, MKF_SP1, SKF};
 ```
 
@@ -277,15 +337,26 @@ RMSD($\hat{\mathbf{Y}},\mathbf{Y}$) steady-state &0.62 & 0.44 & 0.45 & 0.43 & 0.
 
 ### Sensitivity analysis
 
-To produce the heat-map plots in figures 3.33 and 3.34, run the following Python notebook:
+To run the simulations for the sensitivity analysis in section 3.3.4, run the following script:
 
- - [Heatmap-plots-of-sensitivity-results.ipynb](grind-sims/Heatmap-plots-of-sensitivity-results.ipynb)
+```lang-matlab
+rod_obs_sim_sens_P2DcTd4.m
+```
+
+There is also a script to run the sensitivity analysis with observers that have the improved system model, but these results were not included in the thesis as they were not significantly different:
+
+```lang-matlab
+rod_obs_sim_sens_P2Dcd1_T.m
+```
+
+To produce the heat-map plots in figures 3.33 and 3.34, run the following Python notebook:
+ - [grind-sims/Heatmap-plots-of-sensitivity-results.ipynb](grind-sims/Heatmap-plots-of-sensitivity-results.ipynb)
 
 
 ## Unit tests
 
 A set of test scripts are included in each of the main sub-directories, to verify that the main sub-routines are working correctly.  To run the tests run the following command from each sub-directory of the main repository.
 
-```
+```lang-matlab
 >> runtests
 ```
